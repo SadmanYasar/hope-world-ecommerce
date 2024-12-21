@@ -56,6 +56,13 @@ export default function RootLayout({
                       //   },
                       // },
                       {
+                        name: "email",
+                        list: "/email",
+                        meta: {
+                          label: "Email",
+                        },
+                      },
+                      {
                         name: "chat",
                         list: "/chat",
                         meta: {
