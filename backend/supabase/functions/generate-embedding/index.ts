@@ -10,7 +10,7 @@ const supabase = createClient<Database>(
 const model = new Supabase.ai.Session('gte-small')
 
 Deno.serve(async (req) => {
-  const payload: WebhookPayload = await req.json()
+  const payload = await req.json()
   const { description, id } = payload.record
 
   // Check if description has changed.
