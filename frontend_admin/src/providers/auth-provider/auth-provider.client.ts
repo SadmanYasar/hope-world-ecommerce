@@ -2,6 +2,7 @@
 
 import type { AuthProvider } from "@refinedev/core";
 import { supabaseBrowserClient } from "@utils/supabase/client";
+import { toast } from "react-toastify";
 
 export const authProviderClient: AuthProvider = {
   login: async ({ email, password }) => {
@@ -110,6 +111,64 @@ export const authProviderClient: AuthProvider = {
       redirectTo: "/login",
     };
   },
+  forgotPassword: async ({ email }) => {
+    const result = await supabaseBrowserClient.auth.resetPasswordForEmail(
+      email
+    );
+    console.log(result);
+
+    if (!result.error) {
+      toast.success("Password reset instructions sent to " + email);
+
+      return {
+        success: true,
+      };
+    }
+
+    return {
+      success: false,
+      error: {
+        name: "Error",
+        message: "Invalid email",
+      },
+    };
+  },
+
+  updatePassword: async ({ password }) => {
+    if (!password) {
+      return {
+        success: false,
+        error: {
+          name: "Error",
+          message: "Invalid Request",
+        },
+      };
+    }
+
+    const result: any = await supabaseBrowserClient.auth.updateUser({
+      password,
+    });
+
+    if (result.ok) {
+      toast.success("Password updated successfully");
+
+      return {
+        success: true,
+        authenticated: false,
+        logout: true,
+        redirectTo: "/login",
+      };
+    }
+
+    return {
+      success: false,
+      error: {
+        name: "Error",
+        message: "Failed to update password",
+      },
+    };
+  },
+
   getPermissions: async () => {
     const user = await supabaseBrowserClient.auth.getUser();
 

@@ -27,13 +27,16 @@
     "@refinedev/supabase": "^5.7.4",
     "@supabase/ssr": "^0.3.0",
     "@uiw/react-md-editor": "^3.6.0",
+    "aframe-react": "^4.4.0",
     "antd": "^5.17.0",
     "antd-style": "^3.7.1",
     "js-cookie": "^3.0.5",
     "next": "^14.1.0",
     "next-remove-imports": "^1.0.12",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "react-qrcode-logo": "^3.0.0",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",

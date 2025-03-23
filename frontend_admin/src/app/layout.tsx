@@ -79,6 +79,16 @@ export default function RootLayout({
                           canDelete: true,
                         },
                       },
+                      {
+                        name: "ARCollectible",
+                        list: "/ARCollectible",
+                        create: "/ARCollectible/create",
+                        edit: "/ARCollectible/edit/:id",
+                        show: "/ARCollectible/show/:id",
+                        meta: {
+                          canDelete: true,
+                        },
+                      },
                     ]}
                     options={{
                       syncWithLocation: true,
