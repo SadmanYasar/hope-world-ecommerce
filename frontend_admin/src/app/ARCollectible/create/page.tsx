@@ -1,7 +1,10 @@
 "use client";
 
 import { Create, useForm, useSelect } from "@refinedev/antd";
-import { Form, Input, InputNumber, Select } from "antd";
+import { supabaseBrowserClient } from "@utils/supabase/client";
+import { normalizeFile } from "@utils/supabase/normalize";
+import { Form, Input, InputNumber, Select, Upload } from "antd";
+import { RcFile } from "antd/lib/upload/interface";
 
 export default function ProductCreate() {
   const { formProps, saveButtonProps } = useForm({});
@@ -20,38 +23,47 @@ export default function ProductCreate() {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          label={"Description"}
-          name="description"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input.TextArea rows={5} />
-        </Form.Item>
-        <Form.Item
-          label={"Price"}
-          name={["price"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <InputNumber />
-        </Form.Item>
-        <Form.Item
-          label={"Stock"}
-          name={["stock"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <InputNumber />
+        <Form.Item label="Image">
+          <Form.Item
+            name="image"
+            valuePropName="fileList"
+            normalize={(event) => {
+              const normalized = normalizeFile(event);
+              return normalized.length > 0 ? [normalized[0]] : [];
+            }}
+            noStyle
+          >
+            <Upload.Dragger
+              name="file"
+              listType="picture"
+              accept="image/png, image/jpeg, image/gif"
+              maxCount={1}
+              customRequest={async ({ file, onError, onSuccess }) => {
+                try {
+                  const rcFile = file as RcFile;
+                  await supabaseBrowserClient.storage
+                    .from("AR")
+                    .upload(`public/${rcFile.name}`, file, {
+                      cacheControl: "3600",
+                      upsert: true,
+                    });
+
+                  const { data } = await supabaseBrowserClient.storage
+                    .from("AR")
+                    .getPublicUrl(`public/${rcFile.name}`);
+
+                  const xhr = new XMLHttpRequest();
+                  onSuccess?.({ url: data?.publicUrl }, xhr);
+                } catch (error) {
+                  onError?.(new Error("Upload Error"));
+                }
+              }}
+            >
+              <p className="ant-upload-text">
+                Drag and drop an image (png/jpg/gif)
+              </p>
+            </Upload.Dragger>
+          </Form.Item>
         </Form.Item>
       </Form>
     </Create>
