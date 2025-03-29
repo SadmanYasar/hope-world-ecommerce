@@ -58,7 +58,7 @@ const generateARHtml = (imageSrc: string) => `
 </html>
 `;
 
-export default function ProductShow() {
+export default function ARCollectibleShow() {
   const { queryResult } = useShow({});
   const { data, isLoading } = queryResult;
   const [isModalVisible, setIsModalVisible] = useState(false);

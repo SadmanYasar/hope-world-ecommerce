@@ -49,14 +49,16 @@ export default function ProductCreate() {
           <Form.Item
             name="images"
             valuePropName="fileList"
-            normalize={normalizeFile}
+            normalize={(event) => {
+              const normalized = normalizeFile(event);
+              return normalized.length > 0 ? [normalized[0]] : [];
+            }}
             noStyle
           >
             <Upload.Dragger
               name="file"
               listType="picture"
               accept="image/png, image/jpeg, image/gif"
-              multiple
               maxCount={2}
               customRequest={async ({ file, onError, onSuccess }) => {
                 try {

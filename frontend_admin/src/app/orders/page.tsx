@@ -48,11 +48,6 @@ export default function ProductList() {
                     src={image.url}
                     key={index}
                     alt=""
-                    style={{
-                      borderRadius: "5px",
-                      padding: "1px",
-                      objectFit: "cover",
-                    }}
                   />
                 ))}
               </Image.PreviewGroup>
