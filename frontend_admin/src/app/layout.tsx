@@ -68,21 +68,18 @@ export default function RootLayout({
                     dataProvider={dataProvider}
                     notificationProvider={useNotificationProvider}
                     resources={[
-                      // {
-                      //   name: "blog_posts",
-                      //   list: "/blog-posts",
-                      //   create: "/blog-posts/create",
-                      //   edit: "/blog-posts/edit/:id",
-                      //   show: "/blog-posts/show/:id",
-                      //   meta: {
-                      //     canDelete: true,
-                      //   },
-                      // },
                       {
                         name: "email",
                         list: "/email",
                         meta: {
                           label: "Email",
+                        },
+                      },
+                      {
+                        name: "dashboard",
+                        list: "/dashboard",
+                        meta: {
+                          label: "Dashboard",
                         },
                       },
                       {
@@ -93,11 +90,31 @@ export default function RootLayout({
                         },
                       },
                       {
+                        name: "orders",
+                        list: "/orders",
+                        create: "/orders/create",
+                        edit: "/orders/edit/:id",
+                        show: "/orders/show/:id",
+                        meta: {
+                          canDelete: true,
+                        },
+                      },
+                      {
                         name: "products",
                         list: "/products",
                         create: "/products/create",
                         edit: "/products/edit/:id",
                         show: "/products/show/:id",
+                        meta: {
+                          canDelete: true,
+                        },
+                      },
+                      {
+                        name: "reviews",
+                        list: "/reviews",
+                        create: "/reviews/create",
+                        edit: "/reviews/edit/:id",
+                        show: "/reviews/show/:id",
                         meta: {
                           canDelete: true,
                         },

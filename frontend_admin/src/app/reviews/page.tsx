@@ -13,7 +13,7 @@ import { useMany, type BaseRecord } from "@refinedev/core";
 import { Space, Table, Image } from "antd";
 
 export default function ProductList() {
-  const { tableProps, sorters, filters } = useTable({
+  const { tableProps } = useTable({
     syncWithLocation: true,
     meta: {
       select: "*",
@@ -22,10 +22,10 @@ export default function ProductList() {
 
   return (
     <List>
-      <Table {...tableProps} rowKey="id" scroll={{ x: true }}>
+      <Table {...tableProps} rowKey="id">
         <Table.Column dataIndex="id" title={"ID"} />
         <Table.Column dataIndex="name" title={"Name"} />
-        <Table.Column dataIndex="category" title={"Category"} />
+        <Table.Column dataIndex="name" title={"Category"} />
         <Table.Column
           dataIndex="description"
           title={"Description"}
@@ -48,11 +48,6 @@ export default function ProductList() {
                     src={image.url}
                     key={index}
                     alt=""
-                    style={{
-                      borderRadius: "5px",
-                      padding: "1px",
-                      objectFit: "cover",
-                    }}
                   />
                 ))}
               </Image.PreviewGroup>
