@@ -100,6 +100,8 @@ export const authProviderClient: AuthProvider = {
       };
     }
 
+    console.log(user);
+
     if (user) {
       return {
         authenticated: true,
