@@ -84,8 +84,8 @@ export const ProductCardDetails = ({
   rating,
 }: {
   name: string;
-  rating: string;
-  price: string;
+  rating: number;
+  price: number;
 }) => {
   return (
     <>

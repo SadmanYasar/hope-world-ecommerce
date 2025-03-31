@@ -13,6 +13,7 @@ import {
   useList,
   useCustom,
   BaseRecord,
+  useLogout,
 } from "@refinedev/core";
 // import Loading from "@components/ui/loading";
 // import Breadcrumb from "@components/Breadcrumb";
@@ -45,83 +46,69 @@ import randomHeight from "@utils/randomHeight";
 import Link from "next/link";
 import Image from "next/image";
 import MultipleSelector, { Option } from "@components/ui/multiple-selector";
+import { supabaseBrowserClient } from "@utils/supabase/client";
+import { getProducts } from "@actions/getProducts";
+import { AnyNsRecord } from "dns";
 
-// interface MyColorState {
-//   brand: string;
-//   visibility: string;
-//   sortOrderDate: "asc" | "desc" | "none";
-//   showOnlyWithImages: boolean;
-//   color: Option[];
-//   type: Option[];
-// }
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+  images: string;
+  rating?: number;
+}
 
-// type MyColorAction =
-//   | { type: "SET_BRAND"; payload: string }
-//   | { type: "SET_VISIBILITY"; payload: string }
-//   | { type: "SET_SORT_ORDER_DATE"; payload: "asc" | "desc" | "none" }
-//   | { type: "SET_SHOW_ONLY_WITH_IMAGES"; payload: boolean }
-//   | { type: "SET_COLOR"; payload: Option[] }
-//   | { type: "SET_TYPE"; payload: Option[] }
-//   | { type: "RESET_FILTERS" };
-
-// const initialState: MyColorState = {
-//   brand: "",
-//   visibility: "Brand",
-//   sortOrderDate: "desc",
-//   showOnlyWithImages: false,
-//   color: [] as Option[],
-//   type: [] as Option[],
-// };
-
-// function reducer(state: MyColorState, action: MyColorAction): MyColorState {
-//   switch (action.type) {
-//     case "SET_BRAND":
-//       return { ...state, brand: action.payload };
-//     case "SET_VISIBILITY":
-//       return { ...state, visibility: action.payload };
-//     case "SET_SORT_ORDER_DATE":
-//       return { ...state, sortOrderDate: action.payload };
-//     case "SET_SHOW_ONLY_WITH_IMAGES":
-//       return { ...state, showOnlyWithImages: action.payload };
-//     case "SET_COLOR":
-//       return { ...state, color: action.payload };
-//     case "SET_TYPE":
-//       return { ...state, type: action.payload };
-//     case "RESET_FILTERS":
-//       return initialState;
-//     default:
-//       return state;
-//   }
-// }
-
-// type ColorResponse = Partial<
-//   Omit<
-//     components["schemas"]["ItemsColors"],
-//     "SKU_Material_Components" | "Color_Image"
-//   > & {
-//     SKU_Material_Components: Array<
-//       Omit<components["schemas"]["ItemsSKUMaterialComponents"], "SKU"> & {
-//         SKU:
-//           | (Pick<
-//               components["schemas"]["ItemsSKU"],
-//               "SKU_ID" | "id" | "Design"
-//             > & {
-//               Design: { Main_Photo: string | null } | null;
-//             })
-//           | null;
-//       }
-//     > | null;
-//     Color_Image: { id: string } | null;
-//   }
-// >;
+interface GetProductsResponse {
+  data: Product[];
+  nextPage: number | null;
+}
 
 export default function MyColoursPage() {
   const dataProvider = useDataProvider();
+  const { mutate } = useLogout();
   // const [state, dispatch] = useReducer(reducer, initialState);
   // const { data: roleArray } = usePermissions<string>();
-  const { data: user } = useGetIdentity();
+  // const { data: user } = useGetIdentity();
   const [filterSheet, setFilterSheet] = useState<boolean>(false);
+  // const [page, setPage] = useState(1);
+  // const [products, setProducts] = useState<Product[]>([]);
+  // const [hasNextPage, setHasNextPage] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
 
+  // const loadMore = async () => {
+  //   if (!hasNextPage) return;
+
+  //   try {
+  //     const { data, nextPage } = (await getProducts(
+  //       page
+  //     )) as GetProductsResponse;
+  //     setProducts((prev) => [...prev, ...data]);
+  //     setPage((prev) => prev + 1);
+  //     setHasNextPage(!!nextPage);
+  //   } catch (err: unknown) {
+  //     if (err instanceof Error) {
+  //       setError(err.message);
+  //     } else {
+  //       setError("An unknown error occurred");
+  //     }
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // const fetchNextPage = async () => {
+  //   if (!hasNextPage || isLoading) return;
+  //   await loadMore();
+  // };
+
+  // useEffect(() => {
+  //   loadMore();
+  // }, []);
+
+  // Replace the useInfiniteList with:
+  // const allPages = useMemo(() => products, [products]);
   // const role = roleArray?.[0] ?? "";
 
   // const debouncedBrand = useDebounce(state.brand, 300);
@@ -134,6 +121,7 @@ export default function MyColoursPage() {
   // const debouncedTypeFilter = useDebounce(state.type, 300);
   // const debouncedColorFilter = useDebounce(state.color, 300);
 
+  //TODO - NEED TO MAKE THIS SERVER ACTION AS SUPABASE DOES NOT SHOW PUBLIC DATA WITHOUT LOGIN
   const {
     data,
     isLoading,
@@ -142,7 +130,7 @@ export default function MyColoursPage() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteList({
-    resource: "Products",
+    resource: "products",
 
     filters: [],
     sorters: [
@@ -152,10 +140,13 @@ export default function MyColoursPage() {
       // },
     ],
     meta: {
-      fields: ["*"],
+      select: "id, name, price, stock, images",
     },
     pagination: {
       pageSize: 20,
+    },
+    queryOptions: {
+      enabled: true,
     },
   });
 
@@ -168,10 +159,11 @@ export default function MyColoursPage() {
 
   if (error) return <div>Error: {error.message}</div>;
 
-  if (!data?.pages) return <div>No data found</div>;
+  // if (!data?.pages) return <div>No data found</div>;
 
   return (
     <>
+      <Button onClick={() => mutate()}>Logout</Button>
       <div>
         {/* <CanAccess resource="Colors" action="filter"> */}
         <div className="absolute w-10 left-0 right-0 ml-auto mr-auto z-50 mt-[19px] -top-[4px]">
