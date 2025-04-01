@@ -53,14 +53,14 @@ export default function ProductEdit() {
                 try {
                   const rcFile = file as RcFile;
                   await supabaseBrowserClient.storage
-                    .from("AR")
+                    .from("ar")
                     .upload(`public/${rcFile.name}`, file, {
                       cacheControl: "3600",
                       upsert: true,
                     });
 
                   const { data } = await supabaseBrowserClient.storage
-                    .from("AR")
+                    .from("ar")
                     .getPublicUrl(`public/${rcFile.name}`);
 
                   const xhr = new XMLHttpRequest();

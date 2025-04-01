@@ -84,7 +84,11 @@ CREATE TYPE "public"."app_permission" AS ENUM (
     'orders.delete',
     'products.create',
     'products.read',
-    'products.update'
+    'products.update',
+    'ar.create',
+    'ar.read',
+    'ar.update',
+    'ar.delete'
 );
 
 

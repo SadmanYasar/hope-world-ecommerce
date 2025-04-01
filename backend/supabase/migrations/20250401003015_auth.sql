@@ -1,32 +1,3 @@
-revoke delete on table "public"."user_roles" from "anon";
-
-revoke insert on table "public"."user_roles" from "anon";
-
-revoke references on table "public"."user_roles" from "anon";
-
-revoke select on table "public"."user_roles" from "anon";
-
-revoke trigger on table "public"."user_roles" from "anon";
-
-revoke truncate on table "public"."user_roles" from "anon";
-
-revoke update on table "public"."user_roles" from "anon";
-
-revoke delete on table "public"."user_roles" from "authenticated";
-
-revoke insert on table "public"."user_roles" from "authenticated";
-
-revoke references on table "public"."user_roles" from "authenticated";
-
-revoke select on table "public"."user_roles" from "authenticated";
-
-revoke trigger on table "public"."user_roles" from "authenticated";
-
-revoke truncate on table "public"."user_roles" from "authenticated";
-
-revoke update on table "public"."user_roles" from "authenticated";
-
-
 drop trigger if exists "objects_delete_delete_prefix" on "storage"."objects";
 
 drop trigger if exists "objects_insert_create_prefix" on "storage"."objects";
@@ -215,5 +186,13 @@ grant trigger on table "storage"."s3_multipart_uploads_parts" to "postgres";
 grant truncate on table "storage"."s3_multipart_uploads_parts" to "postgres";
 
 grant update on table "storage"."s3_multipart_uploads_parts" to "postgres";
+
+create policy "Enable read access for all users"
+on "storage"."buckets"
+as permissive
+for select
+to public
+using (true);
+
 
 
