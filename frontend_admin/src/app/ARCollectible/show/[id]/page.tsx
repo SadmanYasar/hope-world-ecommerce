@@ -9,12 +9,13 @@ import {
   TextField,
 } from "@refinedev/antd";
 import { useOne, useShow } from "@refinedev/core";
-import { Button, Typography } from "antd";
+import { Button, Col, Flex, Row, Typography } from "antd";
 import Modal from "antd/lib/modal";
 import Image from "next/image";
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
-
+import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { QRCode } from "react-qrcode-logo";
+import C from "../../c.png";
 const { Title } = Typography;
 
 // Generate the HTML content for the iframe with a robust stop mechanism
@@ -58,17 +59,38 @@ const generateARHtml = (imageSrc: string) => `
 </html>
 `;
 
+const baseURL = "https://hope-world-storefront.vercel.app";
+
 export default function ARCollectibleShow() {
   const { queryResult } = useShow({});
   const { data, isLoading } = queryResult;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [iframeSrc, setIframeSrc] = useState("");
   const iframeRef = useRef<any>(null);
-
+  const ref = useRef<QRCode>();
+  const [state, setState] = useState<{ [key: string]: any }>({
+    ecLevel: "H",
+    logoImage: C.src,
+    logoPadding: 4,
+    size: 400,
+  });
   const record = data?.data;
+
+  useEffect(() => {
+    if (record?.id) {
+      setState((prev) => ({
+        ...prev,
+        value: `${baseURL}/AR/${record.id}`,
+      }));
+    }
+  }, [record?.id]);
 
   const handleOpenModal = () => {
     setIsModalVisible(true);
+  };
+
+  const handleDownload = () => {
+    ref.current?.download();
   };
 
   const handleCloseModal = () => {
@@ -109,12 +131,25 @@ export default function ARCollectibleShow() {
         <Title level={5}>{"Name"}</Title>
         <TextField value={record?.name} />
         <Title level={5}>{"Image"}</Title>
-        <ImageField
-          width={500}
-          height={500}
-          value={record?.image && JSON.parse(record?.image)?.[0]?.url}
-        />
+        <Row>
+          <ImageField
+            width={500}
+            height={500}
+            value={record?.image && JSON.parse(record?.image)?.[0]?.url}
+          />
+          <Flex vertical>
+            <QRCode ref={ref as MutableRefObject<QRCode>} {...state} />
+            <Button
+              type="primary"
+              onClick={handleDownload}
+              style={{ marginTop: "20px" }}
+            >
+              Download QR Code
+            </Button>
+          </Flex>
+        </Row>
       </Show>
+
       <Modal
         title="AR View"
         open={isModalVisible}
