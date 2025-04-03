@@ -47,7 +47,6 @@ import Link from "next/link";
 import Image from "next/image";
 import MultipleSelector, { Option } from "@components/ui/multiple-selector";
 import { supabaseBrowserClient } from "@utils/supabase/client";
-import { getProducts } from "@actions/getProducts";
 import { AnyNsRecord } from "dns";
 
 interface Product {

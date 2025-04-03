@@ -62,14 +62,14 @@ export default function ProductCreate() {
                 try {
                   const rcFile = file as RcFile;
                   await supabaseBrowserClient.storage
-                    .from("Product")
+                    .from("products")
                     .upload(`public/${rcFile.name}`, file, {
                       cacheControl: "3600",
                       upsert: true,
                     });
 
                   const { data } = await supabaseBrowserClient.storage
-                    .from("Product")
+                    .from("products")
                     .getPublicUrl(`public/${rcFile.name}`);
 
                   const xhr = new XMLHttpRequest();
