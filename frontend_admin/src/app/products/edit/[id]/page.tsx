@@ -121,7 +121,7 @@ export default function ProductEdit() {
         >
           <InputNumber />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label={"Stock"}
           name={["stock"]}
           rules={[
@@ -131,7 +131,7 @@ export default function ProductEdit() {
           ]}
         >
           <InputNumber />
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Edit>
   );
