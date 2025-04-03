@@ -3,11 +3,22 @@
 import { Edit, useForm, useSelect } from "@refinedev/antd";
 import { supabaseBrowserClient } from "@utils/supabase/client";
 import { normalizeFile } from "@utils/supabase/normalize";
-import { Form, Input, InputNumber, Upload } from "antd";
+import { Form, Input, InputNumber, Select, Upload } from "antd";
 import { RcFile } from "antd/lib/upload/interface";
 
 export default function ProductEdit() {
-  const { formProps, saveButtonProps } = useForm();
+  const { formProps, saveButtonProps, query } = useForm({
+    meta: {
+      select: "*, category(id,text)",
+    },
+  });
+
+  const productsData = query?.data?.data;
+
+  const { selectProps: categorySelectProps } = useSelect({
+    resource: "categories",
+    defaultValue: productsData?.category?.id,
+  });
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
@@ -33,6 +44,18 @@ export default function ProductEdit() {
           ]}
         >
           <Input.TextArea rows={5} />
+        </Form.Item>
+        <Form.Item
+          label={"Category"}
+          name={"category"}
+          initialValue={formProps?.initialValues?.category?.id}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select {...categorySelectProps} />
         </Form.Item>
         <Form.Item label="Images">
           <Form.Item

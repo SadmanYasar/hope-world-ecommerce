@@ -15,23 +15,23 @@ import { Carousel } from "antd/lib";
 const { Title } = Typography;
 
 export default function ProductShow() {
-  const { queryResult } = useShow({
+  const { query } = useShow({
     // MIGHT USE THIS FOR REVIEWS
-    // meta: {
-    //   select: "*, categories(id,title)",
-    // },
+    meta: {
+      select: "*, category(id,title)",
+    },
   });
-  const { data, isLoading } = queryResult;
+  const { data, isLoading } = query;
 
   const record = data?.data;
 
-  //   const { data: categoryData, isLoading: categoryIsLoading } = useOne({
-  //     resource: "categories",
-  //     id: record?.categories?.id || "",
-  //     queryOptions: {
-  //       enabled: !!record,
-  //     },
-  //   });
+  const { data: categoryData, isLoading: categoryIsLoading } = useOne({
+    resource: "categories",
+    id: record?.category?.id || "",
+    queryOptions: {
+      enabled: !!record,
+    },
+  });
 
   console.log("record", record);
 
@@ -57,12 +57,12 @@ export default function ProductShow() {
       </Image.PreviewGroup>
       <Title level={5}>{"Description"}</Title>
       <MarkdownField value={record?.description} />
-      {/* <Title level={5}>{"Category"}</Title>
-            <TextField
-                value={
-                    categoryIsLoading ? <>Loading...</> : <>{categoryData?.data?.title}</>
-                }
-            /> */}
+      <Title level={5}>{"Category"}</Title>
+      <TextField
+        value={
+          categoryIsLoading ? <>Loading...</> : <>{categoryData?.data?.text}</>
+        }
+      />
       <Title level={5}>{"Stock"}</Title>
       <NumberField value={record?.stock} />
       <Title level={5}>{"Price"}</Title>

@@ -3,11 +3,15 @@
 import { Create, useForm, useSelect } from "@refinedev/antd";
 import { supabaseBrowserClient } from "@utils/supabase/client";
 import { normalizeFile } from "@utils/supabase/normalize";
-import { Form, Input, InputNumber, Upload } from "antd";
+import { Form, Input, InputNumber, Upload, Select } from "antd";
 import { RcFile } from "antd/lib/upload/interface";
 
 export default function ProductCreate() {
   const { formProps, saveButtonProps } = useForm({});
+
+  const { selectProps: categorySelectProps } = useSelect({
+    resource: "categories",
+  });
 
   return (
     <Create saveButtonProps={saveButtonProps}>
@@ -36,14 +40,14 @@ export default function ProductCreate() {
         </Form.Item>
         <Form.Item
           label={"Category"}
-          name={["category"]}
+          name={"category"}
           rules={[
             {
               required: true,
             },
           ]}
         >
-          <Input />
+          <Select {...categorySelectProps} />
         </Form.Item>
         <Form.Item label="Images">
           <Form.Item
@@ -88,17 +92,6 @@ export default function ProductCreate() {
         <Form.Item
           label={"Price"}
           name={["price"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <InputNumber />
-        </Form.Item>
-        <Form.Item
-          label={"Stock"}
-          name={["stock"]}
           rules={[
             {
               required: true,

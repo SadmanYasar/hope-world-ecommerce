@@ -120,6 +120,16 @@ export default function RootLayout({
                         },
                       },
                       {
+                        name: "categories",
+                        list: "/categories",
+                        create: "/categories/create",
+                        edit: "/categories/edit/:id",
+                        show: "/categories/show/:id",
+                        meta: {
+                          canDelete: true,
+                        },
+                      },
+                      {
                         name: "ARCollectible",
                         list: "/ARCollectible",
                         create: "/ARCollectible/create",

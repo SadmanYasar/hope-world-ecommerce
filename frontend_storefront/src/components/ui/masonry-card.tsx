@@ -4,6 +4,7 @@ import Image from "next/image";
 import { DialogOverlay } from "./dialog";
 import { BaseRecord, CanAccess, usePermissions } from "@refinedev/core";
 import { cn } from "@components/lib/utils";
+import { Rating } from "./rating";
 
 export const variantsMasonryCard: Variants = {
   hidden: {
@@ -94,16 +95,18 @@ export const ProductCardDetails = ({
         className="hidden absolute right-0 bottom-0 left-0 flex-col justify-center items-center p-4 h-full text-white bg-black bg-opacity-40 md:flex"
       >
         <p className="self-center text-base font-medium max-sm:pb-2">{name}</p>
-        <p className="absolute bottom-4 text-sm font-medium max-sm:pb-2">
+        {/* <p className="absolute bottom-4 text-sm font-medium max-sm:pb-2">
           Rating {rating}
-        </p>
+        </p> */}
+        <Rating rating={rating} />
         <p className="absolute bottom-0 text-sm font-medium max-sm:pb-2">
           ${price}
         </p>
       </motion.div>
       <div className="flex absolute right-0 bottom-0 left-0 flex-col justify-between items-center p-4 text-white bg-black bg-opacity-40 md:hidden">
         <p className="text-sm max-sm:pb-2">{name}</p>
-        <p className="text-sm max-sm:pb-2">Rating {rating}</p>
+        {/* <p className="text-sm max-sm:pb-2">Rating {rating}</p> */}
+        <Rating rating={rating} />
         <p className="text-sm max-sm:pb-2">${price}</p>
       </div>
     </>
