@@ -35,8 +35,8 @@ type MasonryCardProps = {
 export const MasonryCard = ({
   imageUrl,
   imageAlt,
-  imageWidth = 500,
-  imageHeight = 700,
+  imageWidth,
+  imageHeight,
   linkHref,
   className,
   children,
@@ -45,15 +45,15 @@ export const MasonryCard = ({
     <motion.div
       initial="hidden"
       whileHover="visible"
-      className={cn("overflow-hidden relative rounded-lg", className)}
+      className={cn("overflow-hidden relative bg-none", className)}
     >
       {linkHref ? (
-        <Link href={linkHref} className="flex flex-col h-full">
-          <div className="relative w-full h-full">
+        <Link href={linkHref} className="flex flex-col">
+          <div className="relative">
             <Image
               width={imageWidth}
               height={imageHeight}
-              className="object-cover rounded-t-lg"
+              className="object-cover rounded"
               src={imageUrl}
               alt={imageAlt}
             />
@@ -61,18 +61,18 @@ export const MasonryCard = ({
           {children}
         </Link>
       ) : (
-        <button type="button" className="flex flex-col w-full">
-          <div className="relative w-full h-full min-h-[200px]">
+        <div className="flex flex-col cursor-pointer">
+          <div className="relative">
             <Image
               width={imageWidth}
               height={imageHeight}
-              className="object-cover rounded-t-lg"
+              className="object-cover rounded"
               src={imageUrl}
               alt={imageAlt}
             />
           </div>
           {children}
-        </button>
+        </div>
       )}
     </motion.div>
   );

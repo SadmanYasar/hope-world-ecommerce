@@ -278,7 +278,7 @@ export default function MyColoursPage() {
         scrollableTarget="scrollableDiv"
       >
         <ResponsiveMasonry
-          columnsCountBreakPoints={{ 300: 2, 500: 3, 700: 5, 900: 6 }}
+          columnsCountBreakPoints={{ 300: 2, 500: 2, 700: 5, 900: 6 }}
           className="p-5"
         >
           <Masonry gutter="20px">
@@ -288,8 +288,22 @@ export default function MyColoursPage() {
               allPages?.map((product, index) => {
                 const height = randomHeight(index);
                 return (
+                  // <MasonryCard
+                  //   key={index}
+                  //   // linkHref={`/products/${product.id}`}
+                  //   imageAlt={`Image of product item ${product.id}`}
+                  //   imageUrl={JSON.parse(product.images ?? "[]")[0]?.url}
+                  //   imageWidth={500}
+                  //   imageHeight={height}
+                  // >
+                  //   <ProductCardDetails
+                  //     name={product.name ?? ""}
+                  //     price={product.price}
+                  //     rating={product.rating ?? 0}
+                  //   />
+                  // </MasonryCard>
                   <Sheet key={index}>
-                    <SheetTrigger>
+                    <SheetTrigger className="p-0 bg-none">
                       <MasonryCard
                         imageAlt={`Image of product item ${product.id}`}
                         imageUrl={JSON.parse(product.images ?? "[]")[0]?.url}
