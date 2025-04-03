@@ -16,8 +16,8 @@ export default function CategoryShow() {
     <Show isLoading={isLoading}>
       <Title level={5}>{"ID"}</Title>
       <TextField value={record?.id} />
-      <Title level={5}>{"Title"}</Title>
-      <TextField value={record?.title} />
+      <Title level={5}>{"Text"}</Title>
+      <TextField value={record?.text} />
     </Show>
   );
 }
