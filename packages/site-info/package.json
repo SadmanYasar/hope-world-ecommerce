@@ -1,4 +1,5 @@
 {
   "name": "site-info",
+  "version": "1.0.0",
   "packageManager": "yarn@4.7.0"
 }
