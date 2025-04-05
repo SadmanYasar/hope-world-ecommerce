@@ -14,6 +14,9 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    externalDir: true,
+  }
 };
 
 export default nextConfig;
