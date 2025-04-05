@@ -4644,6 +4644,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"app-constants@workspace:packages/app-constants":
+  version: 0.0.0-use.local
+  resolution: "app-constants@workspace:packages/app-constants"
+  languageName: unknown
+  linkType: soft
+
+"ar_viewer@workspace:packages/ar_viewer":
+  version: 0.0.0-use.local
+  resolution: "ar_viewer@workspace:packages/ar_viewer"
+  languageName: unknown
+  linkType: soft
+
 "arg@npm:^5.0.2":
   version: 5.0.2
   resolution: "arg@npm:5.0.2"
