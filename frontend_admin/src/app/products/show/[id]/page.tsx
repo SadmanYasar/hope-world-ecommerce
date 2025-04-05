@@ -18,7 +18,7 @@ export default function ProductShow() {
   const { query } = useShow({
     // MIGHT USE THIS FOR REVIEWS
     meta: {
-      select: "*, category(id,title)",
+      select: "*, category(id,text)",
     },
   });
   const { data, isLoading } = query;

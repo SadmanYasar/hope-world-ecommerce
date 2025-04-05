@@ -65,7 +65,6 @@ interface GetProductsResponse {
 
 export default function MyColoursPage() {
   const dataProvider = useDataProvider();
-  const { mutate } = useLogout();
   // const [state, dispatch] = useReducer(reducer, initialState);
   // const { data: roleArray } = usePermissions<string>();
   // const { data: user } = useGetIdentity();
@@ -139,7 +138,7 @@ export default function MyColoursPage() {
       // },
     ],
     meta: {
-      select: "id, name, price, stock, images",
+      select: "id, name, price, images,  category(id,text)",
     },
     pagination: {
       pageSize: 20,
@@ -162,7 +161,6 @@ export default function MyColoursPage() {
 
   return (
     <>
-      <Button onClick={() => mutate()}>Logout</Button>
       <div>
         {/* <CanAccess resource="Colors" action="filter"> */}
         <div className="absolute w-10 left-0 right-0 ml-auto mr-auto z-50 mt-[19px] -top-[4px]">
@@ -267,11 +265,6 @@ export default function MyColoursPage() {
         hasMore={hasNextPage ?? false}
         loader={
           <div className="mx-auto w-9 h-9 rounded-full border-t-2 border-b-2 border-gray-900 animate-spin" />
-        }
-        endMessage={
-          <p className="text-center text-gray-500">
-            <b>No more items</b>
-          </p>
         }
         height={"calc(100vh - 68px)"}
         className="overflow-auto"
