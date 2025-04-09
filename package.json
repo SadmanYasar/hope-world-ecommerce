@@ -1,7 +1,7 @@
 {
   "name": "hope-world-ecommerce",
   "packageManager": "yarn@4.7.0",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "private": true,
   "workspaces": [
     "apps/*",
