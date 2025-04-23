@@ -40,7 +40,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@components/ui/sheet";
-import { ProductCardDetails, MasonryCard } from "@components/ui/masonry-card";
+import {
+  ProductCardDetails,
+  MasonryCard,
+  AddToCartButton,
+} from "@components/ui/masonry-card";
 import randomHeight from "@utils/randomHeight";
 // import ImageCarousel from "../designs/_components/ImageCarousel";
 import Link from "next/link";
@@ -48,6 +52,8 @@ import Image from "next/image";
 import MultipleSelector, { Option } from "@components/ui/multiple-selector";
 import { supabaseBrowserClient } from "@utils/supabase/client";
 import { AnyNsRecord } from "dns";
+import { useCartStore } from "@/store/cart-store";
+import { ShoppingCart } from "lucide-react";
 
 interface Product {
   id: string;
@@ -130,7 +136,9 @@ export default function MyColoursPage() {
   } = useInfiniteList({
     resource: "products",
 
-    filters: [],
+    filters: [
+      //TODO
+    ],
     sorters: [
       // {
       //   field: "date_created",
@@ -264,7 +272,7 @@ export default function MyColoursPage() {
         next={fetchNextPage}
         hasMore={hasNextPage ?? false}
         loader={
-          <div className="mx-auto w-9 h-9 rounded-full border-t-2 border-b-2 border-gray-900 animate-spin" />
+          <div className="mx-auto border-t-2 border-b-2 border-gray-900 rounded-full w-9 h-9 animate-spin" />
         }
         height={"calc(100vh - 68px)"}
         className="overflow-auto"
@@ -281,20 +289,6 @@ export default function MyColoursPage() {
               allPages?.map((product, index) => {
                 const height = randomHeight(index);
                 return (
-                  // <MasonryCard
-                  //   key={index}
-                  //   // linkHref={`/products/${product.id}`}
-                  //   imageAlt={`Image of product item ${product.id}`}
-                  //   imageUrl={JSON.parse(product.images ?? "[]")[0]?.url}
-                  //   imageWidth={500}
-                  //   imageHeight={height}
-                  // >
-                  //   <ProductCardDetails
-                  //     name={product.name ?? ""}
-                  //     price={product.price}
-                  //     rating={product.rating ?? 0}
-                  //   />
-                  // </MasonryCard>
                   <Sheet key={index}>
                     <SheetTrigger className="p-0 bg-none">
                       <MasonryCard
@@ -307,6 +301,7 @@ export default function MyColoursPage() {
                           name={product.name ?? ""}
                           price={product.price}
                           rating={product.rating ?? 0}
+                          product={product as any}
                         />
                       </MasonryCard>
                     </SheetTrigger>
@@ -314,7 +309,38 @@ export default function MyColoursPage() {
                       <SheetHeader className="-mb-4">
                         <SheetTitle>Product Item {product?.name}</SheetTitle>
                       </SheetHeader>
-                      <div className="overflow-y-auto grow"></div>
+                      <div className="flex flex-col gap-4 pt-6 overflow-y-auto grow">
+                        <div className="aspect-square relative w-full max-w-[300px] mx-auto">
+                          <Image
+                            src={JSON.parse(product.images ?? "[]")[0]?.url}
+                            alt={product.name}
+                            fill
+                            className="object-cover rounded-md"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <h3 className="text-xl font-semibold">
+                            {product.name}
+                          </h3>
+                          <p className="text-lg font-bold">${product.price}</p>
+                          <div className="py-2">
+                            <AddToCartButton
+                              product={product as any}
+                              className="w-full"
+                            />
+                          </div>
+                          <div className="pt-4">
+                            <h4 className="mb-2 font-medium">
+                              Product Details:
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {product.category?.text && (
+                                <span>Category: {product.category.text}</span>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </SheetContent>
                   </Sheet>
                 );
