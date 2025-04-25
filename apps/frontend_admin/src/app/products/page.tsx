@@ -67,7 +67,6 @@ export default function ProductList() {
           }}
         />
         <Table.Column dataIndex="price" title={"Price"} />
-        <Table.Column dataIndex="stock" title={"Stock"} />
         <Table.Column
           title={"Actions"}
           dataIndex="actions"
