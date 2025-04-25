@@ -16,7 +16,7 @@ export default function ProductList() {
   const { tableProps, sorters, filters } = useTable({
     syncWithLocation: true,
     meta: {
-      select: "*",
+      select: "id, name, description, price, images, category(id,text)",
     },
   });
 
@@ -25,7 +25,14 @@ export default function ProductList() {
       <Table {...tableProps} rowKey="id" scroll={{ x: true }}>
         <Table.Column dataIndex="id" title={"ID"} />
         <Table.Column dataIndex="name" title={"Name"} />
-        <Table.Column dataIndex="category" title={"Category"} />
+        <Table.Column
+          dataIndex="category"
+          title={"Category"}
+          render={(value: any) => {
+            if (!value) return "-";
+            return value.text;
+          }}
+        />
         <Table.Column
           dataIndex="description"
           title={"Description"}

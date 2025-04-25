@@ -19,7 +19,7 @@ export default function CategoryList() {
     <List>
       <Table {...tableProps} rowKey="id">
         <Table.Column dataIndex="id" title={"ID"} />
-        <Table.Column dataIndex="title" title={"title"} />
+        <Table.Column dataIndex="text" title={"Text"} />
         <Table.Column
           title={"Actions"}
           dataIndex="actions"

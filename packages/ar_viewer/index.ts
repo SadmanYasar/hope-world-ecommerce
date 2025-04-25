@@ -1,4 +1,4 @@
-// Generate the HTML content for the iframe with a robust stop mechanism
+// Generate the HTML content for the iframe
 export const generateARHtml = (imageSrc: string) => `
 <!doctype html>
 <html>

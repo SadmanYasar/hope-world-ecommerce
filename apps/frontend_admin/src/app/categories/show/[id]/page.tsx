@@ -10,7 +10,7 @@ export default function CategoryShow() {
   const { queryResult } = useShow({});
   const { data, isLoading } = queryResult;
 
-  const record = data?.data;
+  const record = data?.data?.[0];
 
   return (
     <Show isLoading={isLoading}>

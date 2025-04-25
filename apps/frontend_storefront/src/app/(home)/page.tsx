@@ -1,41 +1,14 @@
 "use client";
 
-import { Suspense } from "react";
-
-import {
-  useInfiniteList,
-  Authenticated,
-  useDataProvider,
-  CanAccess,
-  CrudFilter,
-  usePermissions,
-  useGetIdentity,
-  useList,
-  useCustom,
-  BaseRecord,
-  useLogout,
-} from "@refinedev/core";
+import { useInfiniteList, BaseRecord, CrudFilter } from "@refinedev/core";
 // import Loading from "@components/ui/loading";
 // import Breadcrumb from "@components/Breadcrumb";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useEffect, useMemo, useState, useReducer } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { useMemo } from "react";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -47,13 +20,9 @@ import {
 } from "@components/ui/masonry-card";
 import randomHeight from "@utils/randomHeight";
 // import ImageCarousel from "../designs/_components/ImageCarousel";
-import Link from "next/link";
-import Image from "next/image";
-import MultipleSelector, { Option } from "@components/ui/multiple-selector";
-import { supabaseBrowserClient } from "@utils/supabase/client";
-import { AnyNsRecord } from "dns";
-import { useCartStore } from "@/store/cart-store";
-import { ShoppingCart } from "lucide-react";
+import ImageCarousel from "@components/ui/imageCarousel";
+import { useFilterStore } from "@store/filter-store";
+import { useDebounce } from "@components/ui/multiple-selector";
 
 interface Product {
   id: string;
@@ -69,92 +38,51 @@ interface GetProductsResponse {
   nextPage: number | null;
 }
 
-export default function MyColoursPage() {
-  const dataProvider = useDataProvider();
-  // const [state, dispatch] = useReducer(reducer, initialState);
-  // const { data: roleArray } = usePermissions<string>();
-  // const { data: user } = useGetIdentity();
-  const [filterSheet, setFilterSheet] = useState<boolean>(false);
-  // const [page, setPage] = useState(1);
-  // const [products, setProducts] = useState<Product[]>([]);
-  // const [hasNextPage, setHasNextPage] = useState(true);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null);
+export default function ProductsPage() {
+  const { category, sortByDate, search, sortByPrice } = useFilterStore();
 
-  // const loadMore = async () => {
-  //   if (!hasNextPage) return;
+  const debouncedSearch = useDebounce(search, 300);
 
-  //   try {
-  //     const { data, nextPage } = (await getProducts(
-  //       page
-  //     )) as GetProductsResponse;
-  //     setProducts((prev) => [...prev, ...data]);
-  //     setPage((prev) => prev + 1);
-  //     setHasNextPage(!!nextPage);
-  //   } catch (err: unknown) {
-  //     if (err instanceof Error) {
-  //       setError(err.message);
-  //     } else {
-  //       setError("An unknown error occurred");
-  //     }
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const { data, isLoading, error, fetchNextPage, hasNextPage } =
+    useInfiniteList({
+      resource: "products",
 
-  // const fetchNextPage = async () => {
-  //   if (!hasNextPage || isLoading) return;
-  //   await loadMore();
-  // };
-
-  // useEffect(() => {
-  //   loadMore();
-  // }, []);
-
-  // Replace the useInfiniteList with:
-  // const allPages = useMemo(() => products, [products]);
-  // const role = roleArray?.[0] ?? "";
-
-  // const debouncedBrand = useDebounce(state.brand, 300);
-  // const debouncedVisibility = useDebounce(state.visibility, 300);
-  // const debouncedSortOrder = useDebounce(state.sortOrderDate, 300);
-  // const debouncedShowOnlyWithImages = useDebounce(
-  //   state.showOnlyWithImages,
-  //   300,
-  // );
-  // const debouncedTypeFilter = useDebounce(state.type, 300);
-  // const debouncedColorFilter = useDebounce(state.color, 300);
-
-  //TODO - NEED TO MAKE THIS SERVER ACTION AS SUPABASE DOES NOT SHOW PUBLIC DATA WITHOUT LOGIN
-  const {
-    data,
-    isLoading,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteList({
-    resource: "products",
-
-    filters: [
-      //TODO
-    ],
-    sorters: [
-      // {
-      //   field: "date_created",
-      //   order: debouncedSortOrder === "asc" ? "asc" : "desc",
-      // },
-    ],
-    meta: {
-      select: "id, name, price, images,  category(id,text)",
-    },
-    pagination: {
-      pageSize: 20,
-    },
-    queryOptions: {
-      enabled: true,
-    },
-  });
+      filters: [
+        {
+          field: "name",
+          operator: "containss",
+          value: debouncedSearch,
+        },
+        ...(category && category !== "all"
+          ? ([
+              {
+                field: "category.id",
+                operator: "eq",
+                value: category,
+              },
+            ] as CrudFilter[])
+          : []),
+      ],
+      sorters: [
+        {
+          field: "created_at",
+          order: sortByDate === "asc" ? "asc" : "desc",
+        },
+        {
+          field: "price",
+          order: sortByPrice === "asc" ? "asc" : "desc",
+        },
+      ],
+      meta: {
+        select: "id, name, price, images, category(id,text)",
+      },
+      pagination: {
+        pageSize: 20,
+      },
+      queryOptions: {
+        enabled: true,
+      },
+    });
 
   const allPages = useMemo(
     () => (data?.pages ?? []).flatMap((page) => page.data),
@@ -169,104 +97,6 @@ export default function MyColoursPage() {
 
   return (
     <>
-      <div>
-        {/* <CanAccess resource="Colors" action="filter"> */}
-        <div className="absolute w-10 left-0 right-0 ml-auto mr-auto z-50 mt-[19px] -top-[4px]">
-          <div className="inline-flex items-center justify-center gap-[13px]">
-            {/* <ToggleGold /> */}
-            {/* <SortButton
-              state={state}
-              dispatch={dispatch}
-              setFilter={setFilterSheet}
-              sortList={[
-                {
-                  title: "Date: Latest",
-                  value: "desc",
-                  key: "sortOrderDate",
-                  action: (value: string) =>
-                    ({
-                      type: "SET_SORT_ORDER_DATE",
-                      payload: value,
-                    } as MyColorAction),
-                },
-                {
-                  title: "Date: Earliest",
-                  value: "asc",
-                  key: "sortOrderDate",
-                  action: (value: string) =>
-                    ({
-                      type: "SET_SORT_ORDER_DATE",
-                      payload: value,
-                    } as MyColorAction),
-                },
-                // {
-                //   title: "Reset Filters",
-                //   value: "reset",
-                //   action: () => ({ type: "RESET_FILTERS" }) as MyColorAction,
-                // },
-              ]}
-            /> */}
-          </div>
-        </div>
-        <div className="absolute right-3 top-[84px] z-[50]">
-          <Sheet open={filterSheet} onOpenChange={setFilterSheet}>
-            <SheetContent className="flex flex-col">
-              <SheetHeader>
-                <SheetTitle>Filter</SheetTitle>
-              </SheetHeader>
-              <div className="flex flex-col grow">
-                <div className="p-5 space-y-4 grow">
-                  <input className="hidden" />
-                  {/* <MultipleSelector
-                    placeholder="Select Type"
-                    label="Type"
-                    maxSelected={5}
-                    delay={300}
-                    options={Color_Type_Values?.data ?? []}
-                    value={state.type}
-                    onChange={(options: Option[]) =>
-                      dispatch({ type: "SET_TYPE", payload: options })
-                    }
-                    emptyIndicator={
-                      <p className="w-full text-lg leading-10 text-center text-muted-foreground">
-                        No results found.
-                      </p>
-                    }
-                  />
-                  <MultipleSelector
-                    placeholder="Select Colour"
-                    label="Colour"
-                    maxSelected={5}
-                    delay={300}
-                    options={Color_List_Values?.data ?? []}
-                    value={state.color}
-                    onChange={(options: Option[]) =>
-                      dispatch({ type: "SET_COLOR", payload: options })
-                    }
-                    emptyIndicator={
-                      <p className="w-full text-lg leading-10 text-center text-muted-foreground">
-                        No results found.
-                      </p>
-                    }
-                  /> */}
-                </div>
-                <div className="grid gap-4 p-5">
-                  <Button onClick={() => setFilterSheet(false)}>Save</Button>
-                  {/* <Button
-                    onClick={resetFilter}
-                    variant="ghost"
-                    className="text-destructive"
-                  >
-                    Reset Filter
-                  </Button> */}
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-        {/* </CanAccess> */}
-      </div>
-
       <InfiniteScroll
         dataLength={allPages.length}
         next={fetchNextPage}
@@ -307,17 +137,22 @@ export default function MyColoursPage() {
                     </SheetTrigger>
                     <SheetContent className="flex flex-col">
                       <SheetHeader className="-mb-4">
-                        <SheetTitle>Product Item {product?.name}</SheetTitle>
+                        <SheetTitle>{product?.name}</SheetTitle>
                       </SheetHeader>
                       <div className="flex flex-col gap-4 pt-6 overflow-y-auto grow">
-                        <div className="aspect-square relative w-full max-w-[300px] mx-auto">
-                          <Image
+                        {/* <div className="aspect-square relative w-full max-w-[300px] mx-auto"> */}
+                        {/* <Image
                             src={JSON.parse(product.images ?? "[]")[0]?.url}
                             alt={product.name}
                             fill
                             className="object-cover rounded-md"
-                          />
-                        </div>
+                          /> */}
+                        {/* </div> */}
+                        <ImageCarousel
+                          images={JSON.parse(product.images ?? "[]")}
+                          className="w-full max-w-[300px] mx-auto"
+                          fullScreen
+                        />
                         <div className="space-y-2">
                           <h3 className="text-xl font-semibold">
                             {product.name}

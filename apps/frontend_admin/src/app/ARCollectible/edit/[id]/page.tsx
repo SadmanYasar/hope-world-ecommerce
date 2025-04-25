@@ -47,7 +47,7 @@ export default function ProductEdit() {
             <Upload.Dragger
               name="file"
               listType="picture"
-              accept="image/png, image/jpeg, image/gif"
+              accept="image/png, image/jpeg"
               maxCount={1}
               customRequest={async ({ file, onError, onSuccess }) => {
                 try {
@@ -71,7 +71,7 @@ export default function ProductEdit() {
               }}
             >
               <p className="ant-upload-text">
-                Drag and drop an image (png/jpg/gif)
+                Drag and drop an image (png/jpg)
               </p>
             </Upload.Dragger>
           </Form.Item>

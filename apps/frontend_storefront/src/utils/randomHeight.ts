@@ -10,7 +10,7 @@ import { getSiteInfo } from "site-info";
  * @returns {number} The calculated height.
  */
 const randomHeight = (index: number): number =>
-  index % 2 === 0 ? 500 + (index % 7) * 50 : 450 + (index % 5) * 60;
+  index % 2 === 0 ? 400 + (index % 7) * 50 : 350 + (index % 5) * 60;
 
 console.log(getSiteInfo());
 export default randomHeight;

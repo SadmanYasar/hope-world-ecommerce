@@ -8,6 +8,7 @@ import React, { Suspense } from "react";
 import { authProviderClient } from "@providers/auth-provider/auth-provider.client";
 import { dataProvider } from "@providers/data-provider";
 import "@styles/global.css";
+import { notificationProvider } from "@providers/notification-provider";
 
 export const metadata: Metadata = {
   title: "Hope World",
@@ -32,6 +33,7 @@ export default function RootLayout({
                 routerProvider={routerProvider}
                 authProvider={authProviderClient}
                 dataProvider={dataProvider}
+                notificationProvider={notificationProvider}
                 options={{
                   syncWithLocation: true,
                   warnWhenUnsavedChanges: true,

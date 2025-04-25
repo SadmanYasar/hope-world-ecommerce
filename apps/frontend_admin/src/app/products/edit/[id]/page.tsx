@@ -9,7 +9,7 @@ import { RcFile } from "antd/lib/upload/interface";
 export default function ProductEdit() {
   const { formProps, saveButtonProps, query } = useForm({
     meta: {
-      select: "*, category(id,text)",
+      select: "id, name, description, price, images, category(id,text)",
     },
   });
 
@@ -17,11 +17,16 @@ export default function ProductEdit() {
 
   const { selectProps: categorySelectProps } = useSelect({
     resource: "categories",
-    defaultValue: productsData?.category?.id,
+    defaultValue: productsData?.category?.id || "",
+    optionLabel: "text", // Use the "text" field for display
+    optionValue: "id", // Use the "id" field for value
+    queryOptions: {
+      enabled: !!productsData,
+    },
   });
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
+    <Edit saveButtonProps={saveButtonProps} isLoading={query?.isLoading}>
       <Form {...formProps} layout="vertical">
         <Form.Item
           label={"Name"}
@@ -47,7 +52,7 @@ export default function ProductEdit() {
         </Form.Item>
         <Form.Item
           label={"Category"}
-          name={"category"}
+          name={"category.id"}
           initialValue={formProps?.initialValues?.category?.id}
           rules={[
             {
@@ -81,7 +86,7 @@ export default function ProductEdit() {
             <Upload.Dragger
               name="file"
               listType="picture"
-              accept="image/png, image/jpeg, image/gif"
+              accept="image/png, image/jpeg"
               maxCount={2}
               customRequest={async ({ file, onError, onSuccess }) => {
                 try {
@@ -105,7 +110,7 @@ export default function ProductEdit() {
               }}
             >
               <p className="ant-upload-text">
-                Drag and drop an image (png/jpg/gif)
+                Drag and drop an image (png/jpg)
               </p>
             </Upload.Dragger>
           </Form.Item>

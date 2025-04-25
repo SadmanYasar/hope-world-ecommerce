@@ -1,18 +1,22 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export type FilterState = {
+  search: string;
   category: string;
   priceRange: string;
   rating: string;
-  sortBy: string;
+  sortByDate: "asc" | "desc";
+  sortByPrice: "asc" | "desc";
   isFilterMenuOpen: boolean;
 };
 
 type FilterActions = {
+  setSearch: (search: string) => void;
   setCategory: (category: string) => void;
   setPriceRange: (priceRange: string) => void;
   setRating: (rating: string) => void;
-  setSortBy: (sortBy: string) => void;
+  setSortByDate: (sortBy: "asc" | "desc") => void;
+  setSortByPrice: (sortBy: "asc" | "desc") => void;
   toggleFilterMenu: () => void;
   setFilterMenuOpen: (isOpen: boolean) => void;
   resetFilters: () => void;
@@ -20,23 +24,30 @@ type FilterActions = {
 
 export const useFilterStore = create<FilterState & FilterActions>((set) => ({
   // Initial state
-  category: 'all',
-  priceRange: 'all',
-  rating: 'any',
-  sortBy: 'relevance',
+  search: "",
+  category: "all",
+  priceRange: "all",
+  rating: "any",
+  sortByDate: "desc",
   isFilterMenuOpen: false,
-
+  sortByPrice: "asc",
   // Actions
+  setSearch: (search) => set({ search }),
   setCategory: (category) => set({ category }),
   setPriceRange: (priceRange) => set({ priceRange }),
   setRating: (rating) => set({ rating }),
-  setSortBy: (sortBy) => set({ sortBy }),
-  toggleFilterMenu: () => set((state) => ({ isFilterMenuOpen: !state.isFilterMenuOpen })),
+  setSortByDate: (sortBy) => set({ sortByDate: sortBy }),
+  setSortByPrice: (sortBy) => set({ sortByPrice: sortBy }),
+  toggleFilterMenu: () =>
+    set((state) => ({ isFilterMenuOpen: !state.isFilterMenuOpen })),
   setFilterMenuOpen: (isOpen) => set({ isFilterMenuOpen: isOpen }),
-  resetFilters: () => set({ 
-    category: 'all', 
-    priceRange: 'all', 
-    rating: 'any', 
-    sortBy: 'relevance' 
-  }),
+  resetFilters: () =>
+    set({
+      search: "",
+      category: "all",
+      priceRange: "all",
+      rating: "any",
+      sortByDate: "desc",
+      sortByPrice: "asc",
+    }),
 }));

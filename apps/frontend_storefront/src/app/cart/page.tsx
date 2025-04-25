@@ -14,6 +14,8 @@ import {
 } from "@components/ui/card";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeftCircle } from "lucide-react";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -37,37 +39,19 @@ const CartPage = () => {
     setLoading(true);
     // Use the server action to create a checkout session
     await createCheckoutSession(items);
-
-    // if (!response || !response.url) {
-    //   console.error("Invalid checkout session response:", response);
-    //   alert("Unable to proceed to checkout. Please try again.");
-    //   return;
-    // }
-
-    // console.log("Checkout session created:", response.url);
-
-    // // Direct navigation approach
-    // window.open(response.url, "_self");
-
-    // // Fallback approach with slight delay
-    // setTimeout(() => {
-    //   if (location.href !== response.url) {
-    //     console.log("Using fallback redirect...");
-    //     location.replace(response.url!);
-    //   }
-    // }, 1000);
-    // } catch (err) {
-    //   console.error("Error during checkout:", err);
-    //   alert("Something went wrong. Please try again later.");
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   return (
     <Authenticated key={"cart-page"}>
       <div className="container p-6 mx-auto max-w-7xl">
-        <h1 className="mb-8 text-3xl font-bold">Your Cart</h1>
+        <h1 className="mb-8 text-3xl font-bold">
+          <span>
+            <Link href={"/"}>
+              <ArrowLeftCircle className="w-5 h-5 text-black" />
+            </Link>{" "}
+          </span>
+          Your Cart
+        </h1>
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="mb-6 text-xl text-muted-foreground">

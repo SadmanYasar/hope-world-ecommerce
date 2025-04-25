@@ -14,6 +14,15 @@ import { authProviderClient } from "@providers/auth-provider/auth-provider.clien
 import { dataProvider } from "@providers/data-provider";
 import "@refinedev/antd/dist/reset.css";
 import Script from "next/script";
+import {
+  DashboardOutlined,
+  EyeOutlined,
+  MailOutlined,
+  MessageOutlined,
+  OrderedListOutlined,
+  ProductOutlined,
+  ReadOutlined,
+} from "@ant-design/icons";
 
 export const metadata: Metadata = {
   title: "Refine",
@@ -73,6 +82,7 @@ export default function RootLayout({
                         list: "/email",
                         meta: {
                           label: "Email",
+                          icon: <MailOutlined />,
                         },
                       },
                       {
@@ -80,6 +90,7 @@ export default function RootLayout({
                         list: "/dashboard",
                         meta: {
                           label: "Dashboard",
+                          icon: <DashboardOutlined />,
                         },
                       },
                       {
@@ -87,6 +98,7 @@ export default function RootLayout({
                         list: "/chat",
                         meta: {
                           label: "Chat",
+                          icon: <MessageOutlined />,
                         },
                       },
                       {
@@ -107,6 +119,7 @@ export default function RootLayout({
                         show: "/products/show/:id",
                         meta: {
                           canDelete: true,
+                          icon: <ProductOutlined />,
                         },
                       },
                       {
@@ -117,6 +130,7 @@ export default function RootLayout({
                         show: "/reviews/show/:id",
                         meta: {
                           canDelete: true,
+                          icon: <ReadOutlined />,
                         },
                       },
                       {
@@ -127,6 +141,7 @@ export default function RootLayout({
                         show: "/categories/show/:id",
                         meta: {
                           canDelete: true,
+                          icon: <OrderedListOutlined />,
                         },
                       },
                       {
@@ -137,6 +152,7 @@ export default function RootLayout({
                         show: "/ARCollectible/show/:id",
                         meta: {
                           canDelete: true,
+                          icon: <EyeOutlined />,
                         },
                       },
                     ]}

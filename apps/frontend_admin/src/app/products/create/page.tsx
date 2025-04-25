@@ -11,6 +11,8 @@ export default function ProductCreate() {
 
   const { selectProps: categorySelectProps } = useSelect({
     resource: "categories",
+    optionLabel: "text",
+    optionValue: "id",
   });
 
   return (
@@ -59,7 +61,7 @@ export default function ProductCreate() {
             <Upload.Dragger
               name="file"
               listType="picture"
-              accept="image/png, image/jpeg, image/gif"
+              accept="image/png, image/jpeg, image/webp, image/gif"
               multiple
               maxCount={2}
               customRequest={async ({ file, onError, onSuccess }) => {
