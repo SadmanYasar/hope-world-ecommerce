@@ -1,20 +1,22 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
-  SheetTitle, 
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
   SheetTrigger,
   SheetFooter,
-  SheetClose
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageCircle, Send } from "lucide-react";
+import { Authenticated } from "@refinedev/core";
+import Link from "next/link";
 
 type Message = {
   id: string;
@@ -51,7 +53,7 @@ export function ChatBot() {
       sender: "user",
       timestamp: new Date(),
     };
-    
+
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
 
@@ -59,7 +61,8 @@ export function ChatBot() {
     setTimeout(() => {
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "Thanks for your message! This is a demo response. In a real implementation, this would be connected to your backend API.",
+        content:
+          "Thanks for your message! This is a demo response. In a real implementation, this would be connected to your backend API.",
         sender: "bot",
         timestamp: new Date(),
       };
@@ -68,31 +71,34 @@ export function ChatBot() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
+        <Button
+          variant="outline"
+          size="icon"
+          className="fixed rounded-full shadow-lg bottom-6 right-6 h-14 w-14"
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="w-6 h-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[90vw] sm:w-[380px] p-0 flex flex-col">
+      <SheetContent
+        side="right"
+        className="w-[90vw] sm:w-[380px] p-0 flex flex-col"
+      >
         <SheetHeader className="p-4 border-b">
           <SheetTitle className="flex items-center">
-            <Avatar className="h-8 w-8 mr-2">
+            <Avatar className="w-8 h-8 mr-2">
               <AvatarImage src="/bot-avatar.png" alt="Bot" />
               <AvatarFallback>HW</AvatarFallback>
             </Avatar>
             Hope World Assistant
           </SheetTitle>
         </SheetHeader>
-        
+
         <ScrollArea className="flex-1 p-4">
           <div className="flex flex-col space-y-4">
             {messages.map((message) => (
@@ -110,11 +116,13 @@ export function ChatBot() {
                   }`}
                 >
                   <p>{message.content}</p>
-                  <p className={`text-xs mt-1 ${
-                    message.sender === "user" 
-                      ? "text-primary-foreground/70" 
-                      : "text-muted-foreground"
-                  }`}>
+                  <p
+                    className={`text-xs mt-1 ${
+                      message.sender === "user"
+                        ? "text-primary-foreground/70"
+                        : "text-muted-foreground"
+                    }`}
+                  >
                     {formatTime(message.timestamp)}
                   </p>
                 </div>
@@ -123,26 +131,36 @@ export function ChatBot() {
             <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
-        
-        <SheetFooter className="p-4 border-t">
-          <form 
-            className="flex w-full items-center space-x-2"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-          >
-            <Input
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1"
-            />
-            <Button type="submit" size="icon">
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
-        </SheetFooter>
+        <Authenticated
+          key={"chat-auth"}
+          fallback={
+            <Link href={"/login"}>
+              <div className="p-4 text-center">
+                <p className="text-sm text-muted-foreground">Sign in to chat</p>
+              </div>
+            </Link>
+          }
+        >
+          <SheetFooter className="p-4 border-t">
+            <form
+              className="flex items-center w-full space-x-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSendMessage();
+              }}
+            >
+              <Input
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1"
+              />
+              <Button type="submit" size="icon">
+                <Send className="w-4 h-4" />
+              </Button>
+            </form>
+          </SheetFooter>
+        </Authenticated>
       </SheetContent>
     </Sheet>
   );
