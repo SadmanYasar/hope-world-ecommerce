@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import {
   Sheet,
   SheetContent,
@@ -17,6 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageCircle, Send } from "lucide-react";
 import { Authenticated } from "@refinedev/core";
 import Link from "next/link";
+import { supabaseBrowserClient } from "@utils/supabase/client";
 
 type Message = {
   id: string;
@@ -115,7 +117,7 @@ export function ChatBot() {
                       : "bg-muted"
                   }`}
                 >
-                  <p>{message.content}</p>
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
                   <p
                     className={`text-xs mt-1 ${
                       message.sender === "user"
@@ -144,9 +146,62 @@ export function ChatBot() {
           <SheetFooter className="p-4 border-t">
             <form
               className="flex items-center w-full space-x-2"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                handleSendMessage();
+                if (!inputValue.trim()) return;
+
+                const userMessage: Message = {
+                  id: Date.now().toString(),
+                  content: inputValue,
+                  sender: "user",
+                  timestamp: new Date(),
+                };
+
+                setMessages((prev) => [...prev, userMessage]);
+                setInputValue("");
+
+                const mockedData: string = `This is a simulated conversation data. ${
+                  messages.length
+                } messages were passed in this session ${messages
+                  .map((m) => m.content)
+                  .join(", ")}`;
+
+                console.log(messages);
+
+                const latestMessage = userMessage.content;
+
+                try {
+                  const response = await supabaseBrowserClient.functions.invoke(
+                    "search",
+                    {
+                      body: {
+                        search: latestMessage,
+                      },
+                      method: "POST",
+                    }
+                  );
+
+                  const botMessage: Message = {
+                    id: (Date.now() + 1).toString(),
+                    content:
+                      response.data?.response ??
+                      "Sorry, I am not sure how to help with that.",
+                    sender: "bot",
+                    timestamp: new Date(),
+                  };
+
+                  setMessages((prev) => [...prev, botMessage]);
+                } catch (error) {
+                  console.error("Error invoking function:", error);
+                  const botMessage: Message = {
+                    id: (Date.now() + 1).toString(),
+                    content: "An error occurred. Please try again later.",
+                    sender: "bot",
+                    timestamp: new Date(),
+                  };
+
+                  setMessages((prev) => [...prev, botMessage]);
+                }
               }}
             >
               <Input
