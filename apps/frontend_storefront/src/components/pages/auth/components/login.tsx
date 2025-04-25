@@ -204,7 +204,7 @@ export const LoginPage: React.FC<LoginProps> = ({
 
   const content = (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen font-poppins">
-      <h1 className="flex absolute top-0 left-0 justify-center w-full text-3xl md:left-0 md:top-0 md:ml-4 md:mt-4 md:w-auto">
+      <h1 className="absolute top-0 left-0 flex justify-center w-full text-3xl md:left-0 md:top-0 md:ml-4 md:mt-4 md:w-auto">
         Hope World
       </h1>
       <div className="flex items-center bg-[url('/images/background_login_section.jpg')] bg-image-common justify-center h-screen">
@@ -238,7 +238,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="p-2 mb-2 rounded-md border border-gray-300"
+                      className="p-2 mb-2 border border-gray-300 rounded-md"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -253,7 +253,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                       size={20}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="p-2 mb-2 rounded-md border border-gray-300"
+                      className="p-2 mb-2 border border-gray-300 rounded-md"
                     />
                   </div>
                   {rememberMe ?? (
@@ -292,7 +292,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                   <Button
                     type="submit"
                     // value={translate("pages.login.signin", "Sign in")}
-                    className="px-4 py-2 mt-2 text-white rounded-md bg-navy-dark hover:bg-blue-950"
+                    className="px-4 py-2 mt-2 text-white rounded-md bg-blue-950 hover:bg-blue-950"
                   >
                     {translate("pages.login.signin", "Sign in")}
                   </Button>
