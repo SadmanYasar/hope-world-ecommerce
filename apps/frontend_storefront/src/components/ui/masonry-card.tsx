@@ -121,7 +121,7 @@ export const AddToCartButton = ({
 
     addItem(cartItem);
     open?.({
-      message: `$${product.name} added to cart`,
+      message: `${product.name} added to cart`,
       type: "success",
     });
   };
