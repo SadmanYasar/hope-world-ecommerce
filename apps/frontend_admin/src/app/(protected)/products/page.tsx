@@ -9,6 +9,7 @@ import {
   ShowButton,
   MarkdownField,
   List,
+  getDefaultSortOrder,
 } from "@refinedev/antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { CrudFilters, HttpError } from "@refinedev/core";
@@ -49,7 +50,7 @@ interface IProductFilterVariables {
 }
 
 export default function ProductsPage() {
-  const { tableProps, searchFormProps } = useTable<
+  const { tableProps, searchFormProps, setSorters, sorters } = useTable<
     IProduct,
     HttpError,
     IProductFilterVariables
@@ -58,6 +59,14 @@ export default function ProductsPage() {
     meta: {
       select:
         "id, name, description, price, images, category(id,text), created_at",
+    },
+    sorters: {
+      initial: [
+        {
+          field: "created_at",
+          order: "desc",
+        },
+      ],
     },
     onSearch: (params) => {
       const filters: CrudFilters = [];
@@ -101,8 +110,18 @@ export default function ProductsPage() {
         <Col lg={18} xs={24}>
           <List>
             <Table {...tableProps} rowKey="id" scroll={{ x: true }}>
-              <Table.Column dataIndex="id" title="ID" />
-              <Table.Column dataIndex="name" title="Name" />
+              <Table.Column
+                dataIndex="id"
+                title="ID"
+                sorter
+                defaultSortOrder={getDefaultSortOrder("id")}
+              />
+              <Table.Column
+                dataIndex="name"
+                title="Name"
+                sorter
+                defaultSortOrder={getDefaultSortOrder("name")}
+              />
               <Table.Column
                 dataIndex="category"
                 title="Category"
@@ -110,6 +129,8 @@ export default function ProductsPage() {
                   if (!value) return "-";
                   return value.text;
                 }}
+                sorter
+                defaultSortOrder={getDefaultSortOrder("category")}
               />
               <Table.Column
                 dataIndex="description"
@@ -148,6 +169,8 @@ export default function ProductsPage() {
                 dataIndex="created_at"
                 title="Created At"
                 render={(value) => <DateField format="LLL" value={value} />}
+                sorter
+                defaultSortOrder={getDefaultSortOrder("created_at")}
               />
               <Table.Column<IProduct>
                 title="Actions"

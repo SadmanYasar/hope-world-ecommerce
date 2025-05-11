@@ -64,7 +64,7 @@ export default function ProductsPage() {
         ...(category && category !== "all"
           ? ([
               {
-                field: "category.id",
+                field: "category!inner(id)",
                 operator: "eq",
                 value: category,
               },
