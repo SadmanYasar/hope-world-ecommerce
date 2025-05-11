@@ -9,6 +9,7 @@ import { authProviderClient } from "@providers/auth-provider/auth-provider.clien
 import { dataProvider } from "@providers/data-provider";
 import "@styles/global.css";
 import { notificationProvider } from "@providers/notification-provider";
+import ToastProvider from "@providers/notification-provider/toast.provider";
 
 export const metadata: Metadata = {
   title: "Hope World",
@@ -41,7 +42,7 @@ export default function RootLayout({
                   projectId: "eG5OPR-xaQxJb-VqAe4M",
                 }}
               >
-                {children}
+                <ToastProvider>{children}</ToastProvider>
                 <RefineKbar />
               </Refine>
             </DevtoolsProvider>

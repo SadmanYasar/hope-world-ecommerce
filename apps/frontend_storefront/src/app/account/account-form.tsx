@@ -17,7 +17,9 @@ import {
 import { Input } from "@/components/ui/input";
 import Dropzone, { type DropzoneState } from "react-dropzone";
 import { supabaseBrowserClient } from "@utils/supabase/client";
-import { useNotification } from "@refinedev/core";
+import { useLogout, useNotification } from "@refinedev/core";
+import Link from "next/link";
+import { ArrowLeftCircle } from "lucide-react";
 
 const DropzoneContent = ({
   isDragAccept,
@@ -48,14 +50,16 @@ const DropzoneContent = ({
 };
 
 const profileSchema = z.object({
-  full_name: z.string().min(1, { message: "Full name is required" }),
-  username: z.string().min(1, { message: "Username is required" }),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  username: z.string().min(1, "Username is required"),
   avatar_url: z.string().optional().nullable(),
 });
 
 export default function AccountForm({ user }: { user: User | null }) {
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const { mutate } = useLogout();
   const { open } = useNotification();
 
   const form = useForm<
@@ -68,17 +72,10 @@ export default function AccountForm({ user }: { user: User | null }) {
       id: user?.id,
       resource: "profiles",
       meta: {
-        select: "full_name, username, avatar_url",
+        select: "first_name, last_name, username, avatar_url",
       },
       action: "edit",
       redirect: false,
-      successNotification() {
-        open?.({
-          type: "success",
-          message: "Profile updated successfully",
-        });
-        return undefined;
-      },
     },
   });
 
@@ -166,7 +163,15 @@ export default function AccountForm({ user }: { user: User | null }) {
   };
 
   return (
-    <div className="container flex flex-col max-w-2xl gap-4 mx-auto">
+    <div className="container flex flex-col max-w-xl gap-4 px-4 mx-auto">
+      <h1 className="mb-8 text-3xl font-bold">
+        <span>
+          <Link href={"/"}>
+            <ArrowLeftCircle className="w-5 h-5 text-black" />
+          </Link>{" "}
+        </span>
+        Account Settings
+      </h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onFinish)} className="space-y-8">
           <FormItem>
@@ -240,23 +245,50 @@ export default function AccountForm({ user }: { user: User | null }) {
           </FormItem>
           <FormField
             control={form.control}
-            name="full_name"
+            name="first_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full Name</FormLabel>
+                <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your full name" {...field} />
+                  <Input placeholder="Enter your first name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            disabled={uploading || form.formState.isSubmitting}
-          >
-            Submit
-          </Button>
+          <FormField
+            control={form.control}
+            name="last_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your last name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex flex-col gap-y-4">
+            <Button
+              type="submit"
+              disabled={uploading || form.formState.isSubmitting}
+            >
+              Save Changes
+            </Button>
+            <Button
+              type="button"
+              variant={"destructive"}
+              onClick={() => mutate()}
+            >
+              Logout
+            </Button>
+            <Link href={"/forgot-password"}>
+              <Button type="button" variant={"default"}>
+                Change Password
+              </Button>
+            </Link>
+          </div>
         </form>
       </Form>
     </div>
