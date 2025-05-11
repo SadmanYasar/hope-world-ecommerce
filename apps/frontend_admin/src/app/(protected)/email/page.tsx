@@ -10,11 +10,12 @@ import { useState } from "react";
 
 import { useNotification } from "@refinedev/core";
 import { render } from "@react-email/components";
+import MDEditor from "@uiw/react-md-editor";
 
-const MDEditor = dynamic(
-    () => import("@uiw/react-md-editor"),
-    { ssr: false }
-);
+// const MDEditor = dynamic(
+//     () => import("@uiw/react-md-editor"),
+//     { ssr: false }
+// );
 
 export default function ChatPage() {
     const [html, setHtml] = useState<string>();

@@ -3,6 +3,7 @@
 import type { AuthProvider } from "@refinedev/core";
 import { supabaseBrowserClient } from "@utils/supabase/client";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
 export const authProviderClient: AuthProvider = {
   login: async ({ email, password }) => {
@@ -100,8 +101,6 @@ export const authProviderClient: AuthProvider = {
       };
     }
 
-    console.log(user);
-
     if (user) {
       return {
         authenticated: true,
@@ -174,14 +173,29 @@ export const authProviderClient: AuthProvider = {
   getPermissions: async () => {
     const user = await supabaseBrowserClient.auth.getUser();
 
+    const { data, error } = await supabaseBrowserClient.auth.getSession();
+
+    //get access token from user session supabase
+    const access_token = data?.session?.access_token;
+
+    //decode access token and get user role
+    let userRole = null;
+    if (access_token) {
+      const jwt: any = jwtDecode(access_token);
+      userRole = jwt?.user_role;
+    }
+
+    console.log("user permission", userRole);
+
     if (user) {
-      return user.data.user?.role;
+      return userRole || user.data.user?.role;
     }
 
     return null;
   },
   getIdentity: async () => {
     const user = await supabaseBrowserClient.auth.getUser();
+    console.log(user);
 
     const { data: profile } = await supabaseBrowserClient
       .from("profiles")
@@ -198,13 +212,6 @@ export const authProviderClient: AuthProvider = {
         full_name: profile?.full_name,
       };
     }
-
-    // if (data?.user) {
-    //   return {
-    //     ...data.user,
-    //     name: data.user.email,
-    //   };
-    // }
 
     return null;
   },
