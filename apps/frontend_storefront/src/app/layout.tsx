@@ -5,8 +5,9 @@ import routerProvider from "@refinedev/nextjs-router";
 import { Metadata } from "next";
 import React, { Suspense } from "react";
 
-import { authProviderClient } from "@providers/auth-provider/auth-provider.client";
-import { dataProvider } from "@providers/data-provider";
+// import { authProviderClient } from "@providers/auth-provider/auth-provider.client";
+import { authProviderClient } from "auth-provider-client";
+import { dataProvider } from "data-provider-package";
 import "@styles/global.css";
 import { notificationProvider } from "@providers/notification-provider";
 import ToastProvider from "@providers/notification-provider/toast.provider";

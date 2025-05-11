@@ -1,12 +1,13 @@
 "use server";
 
-import { PUBLIC_URL } from "@utils/supabase/constants";
-import { createSupabaseServerClient } from "@utils/supabase/server";
+import { PUBLIC_URL } from "supabase-package/utils/constants";
+// import { createSupabaseServerClient } from "supabase-package/server";
 import { redirect } from "next/navigation";
-//TODO - MAY NEED TO USE PACKAGE VERSION
-import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+import stripe from "stripe-package";
+// import Stripe from "stripe";
+
+// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
 type CartItem = {
   id: string;

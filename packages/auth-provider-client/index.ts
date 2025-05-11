@@ -1,9 +1,9 @@
 "use client";
 
 import type { AuthProvider } from "@refinedev/core";
-import { supabaseBrowserClient } from "@utils/supabase/client";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
+import { supabaseBrowserClient } from "../supabase/client";
 
 export const authProviderClient: AuthProvider = {
   login: async ({ email, password }) => {
@@ -13,6 +13,8 @@ export const authProviderClient: AuthProvider = {
         password,
       }
     );
+
+    console.log("Im called from packages!")
 
     if (error) {
       return {
@@ -199,7 +201,7 @@ export const authProviderClient: AuthProvider = {
 
     const { data: profile } = await supabaseBrowserClient
       .from("profiles")
-      .select(`full_name, username, avatar_url`)
+      .select(`first_name, last_name, username, avatar_url`)
       .eq("id", user?.data?.user?.id)
       .single();
 
@@ -209,7 +211,8 @@ export const authProviderClient: AuthProvider = {
         name: user.data.user.email,
         avatar: profile?.avatar_url,
         username: profile?.username,
-        full_name: profile?.full_name,
+        first_name: profile?.first_name,
+        last_name: profile?.last_name,
       };
     }
 

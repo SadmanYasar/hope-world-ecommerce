@@ -1,11 +1,13 @@
 "use client";
 
 // import { dataProvider as dataProviderSupabase } from "@refinedev/supabase";
-import { supabaseBrowserClient } from "@utils/supabase/client";
 import type { DataProvider } from "@refinedev/core";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { handleError } from "@utils/supabase/handleError";
-import { generateFilter } from "@utils/supabase/generateFilter";
+import { supabaseBrowserClient } from "../supabase/client";
+import { handleError } from "supabase-package/utils/handleError";
+import { generateFilter } from "supabase-package/utils/generateFilter";
+// import { handleError } from "@utils/supabase/handleError";
+// import { generateFilter } from "@utils/supabase/generateFilter";
 
 const dataProviderSupabase = (
   supabaseClient: SupabaseClient<any, any, any>

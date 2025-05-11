@@ -1,7 +1,7 @@
 "use client";
 
 import { Create, Edit, useForm, useSelect } from "@refinedev/antd";
-import { supabaseBrowserClient } from "@utils/supabase/client";
+import { supabaseBrowserClient } from "supabase-package/client";
 import { normalizeFile } from "@utils/supabase/normalize";
 import { Form, Input, InputNumber, Select, Upload } from "antd";
 import { RcFile } from "antd/lib/upload/interface";

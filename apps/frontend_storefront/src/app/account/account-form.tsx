@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Dropzone, { type DropzoneState } from "react-dropzone";
-import { supabaseBrowserClient } from "@utils/supabase/client";
+import { supabaseBrowserClient } from "supabase-package/client";
 import { useLogout, useNotification } from "@refinedev/core";
 import Link from "next/link";
 import { ArrowLeftCircle } from "lucide-react";

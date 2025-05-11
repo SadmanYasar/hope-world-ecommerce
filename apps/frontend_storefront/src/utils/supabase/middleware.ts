@@ -1,6 +1,6 @@
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
-import { SUPABASE_KEY, SUPABASE_URL } from "./constants";
+import { SUPABASE_KEY, SUPABASE_URL } from "supabase-package/utils/constants";
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({

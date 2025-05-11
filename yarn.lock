@@ -4883,6 +4883,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"auth-provider-client@workspace:packages/auth-provider-client":
+  version: 0.0.0-use.local
+  resolution: "auth-provider-client@workspace:packages/auth-provider-client"
+  languageName: unknown
+  linkType: soft
+
+"auth-provider-server@workspace:packages/auth-provider-server":
+  version: 0.0.0-use.local
+  resolution: "auth-provider-server@workspace:packages/auth-provider-server"
+  languageName: unknown
+  linkType: soft
+
 "autoprefixer@npm:^10.4.19":
   version: 10.4.21
   resolution: "autoprefixer@npm:10.4.21"
@@ -5943,6 +5955,12 @@ __metadata:
   checksum: 10c0/4c2647e0f42acaee7d068756c1d396e296c3556f9c8314bac1ac63ffb236217ef0e7e58602b18bb2173deec7ec8e0cac8e27cccf8f5526666b4ff11a13ad54a3
   languageName: node
   linkType: hard
+
+"data-provider-package@workspace:packages/data-provider":
+  version: 0.0.0-use.local
+  resolution: "data-provider-package@workspace:packages/data-provider"
+  languageName: unknown
+  linkType: soft
 
 "data-uri-to-buffer@npm:^4.0.0":
   version: 4.0.1
@@ -14578,6 +14596,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stripe-package@workspace:packages/stripe":
+  version: 0.0.0-use.local
+  resolution: "stripe-package@workspace:packages/stripe"
+  dependencies:
+    "@stripe/stripe-js": "npm:^7.1.0"
+    stripe: "npm:^18.0.0"
+  languageName: unknown
+  linkType: soft
+
 "stripe@npm:^18.0.0":
   version: 18.0.0
   resolution: "stripe@npm:18.0.0"
@@ -14587,15 +14614,6 @@ __metadata:
   checksum: 10c0/26c43da3877337d09f7cb41b82ec019e5f80971652be6b4276aa69714bbef04f62e7c76ad8a1d50d21d7165f9c4b937812e0c0595fd800bdf4433c0455c8159d
   languageName: node
   linkType: hard
-
-"stripe@workspace:packages/stripe":
-  version: 0.0.0-use.local
-  resolution: "stripe@workspace:packages/stripe"
-  dependencies:
-    "@stripe/stripe-js": "npm:^7.1.0"
-    stripe: "npm:^18.0.0"
-  languageName: unknown
-  linkType: soft
 
 "style-to-js@npm:^1.0.0":
   version: 1.1.16
@@ -14690,6 +14708,12 @@ __metadata:
   checksum: 10c0/d708bc811b062f1300bdbc3a78e6d07613435e68e499f2199d9b8510e69d1f1b6b559c69fc6f2b26446c1c9b55bcb88ecfb40e7e31898c23a6000e6253c9509c
   languageName: node
   linkType: hard
+
+"supabase-package@workspace:packages/supabase":
+  version: 0.0.0-use.local
+  resolution: "supabase-package@workspace:packages/supabase"
+  languageName: unknown
+  linkType: soft
 
 "supabase@npm:^2.1.1":
   version: 2.20.11

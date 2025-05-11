@@ -1,6 +1,7 @@
 import { AuthPage } from "@components/auth-page";
-import { authProviderServer } from "@providers/auth-provider/auth-provider.server";
+// import { authProviderServer } from "@providers/auth-provider/auth-provider.server";
 import { redirect } from "next/navigation";
+import { authProviderServer } from "auth-provider-server";
 
 export default async function ForgotPassword() {
   const data = await getData();

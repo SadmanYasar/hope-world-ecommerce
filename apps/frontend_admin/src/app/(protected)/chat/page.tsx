@@ -1,18 +1,21 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { ProChat } from "@ant-design/pro-chat";
 import { useThemedLayoutContext } from "@refinedev/antd";
-import { supabaseBrowserClient } from "@utils/supabase/client";
+import { supabaseBrowserClient } from "supabase-package/client";
 import { useTheme } from "antd-style";
+import { ColorModeContext } from "@contexts/color-mode";
 
 export default function ChatPage() {
   const theme = useTheme();
+  const { mode } = useContext(ColorModeContext);
   const [showComponent, setShowComponent] = useState(false);
   useEffect(() => setShowComponent(true), []);
   return (
     <div
       style={{
-        backgroundColor: theme.colorBgLayout,
+        background: theme.colorBgLayout,
+        color: theme.colorPrimaryText,
         width: "100%",
         height: "500px",
         display: "flex",
@@ -26,7 +29,7 @@ export default function ChatPage() {
           style={{
             width: "100%",
             marginTop: "auto",
-            color: theme.colorPrimaryText, // Added appropriate text color
+            color: mode === "dark" ? "black" : "white",
           }}
           locale="en-US"
           request={async (messages) => {

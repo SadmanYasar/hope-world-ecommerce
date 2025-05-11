@@ -1,5 +1,5 @@
 import type { AuthProvider } from "@refinedev/core";
-import { createSupabaseServerClient } from "@utils/supabase/server";
+import { createSupabaseServerClient } from "../supabase/server";
 import { jwtDecode } from "jwt-decode";
 
 export const authProviderServer: Pick<AuthProvider, "check"> = {

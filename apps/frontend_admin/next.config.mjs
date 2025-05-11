@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@refinedev/antd", "@ant-design/pro-chat",],
+  transpilePackages: ["@refinedev/antd", "@ant-design/pro-chat", "@ant-design/pro-editor",],
   output: "standalone",
   images: {
     remotePatterns: [

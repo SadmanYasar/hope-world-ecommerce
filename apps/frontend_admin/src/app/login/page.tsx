@@ -1,5 +1,7 @@
 import { AuthPage } from "@components/auth-page";
-import { authProviderServer } from "@providers/auth-provider/auth-provider.server";
+// import { authProviderServer } from "@providers/auth-provider/auth-provider.server";
+import { authProviderServer } from "auth-provider-server";
+
 import { redirect } from "next/navigation";
 
 export default async function Login() {

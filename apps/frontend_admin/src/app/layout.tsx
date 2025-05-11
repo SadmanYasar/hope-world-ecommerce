@@ -10,8 +10,10 @@ import React, { Suspense } from "react";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AppIcon } from "@components/app-icon";
 import { ColorModeContextProvider } from "@contexts/color-mode";
-import { authProviderClient } from "@providers/auth-provider/auth-provider.client";
-import { dataProvider } from "@providers/data-provider";
+import { dataProvider } from "data-provider-package";
+import { authProviderClient } from "auth-provider-client";
+// import { authProviderClient } from "@providers/auth-provider/auth-provider.client";
+// import { dataProvider } from "@providers/data-provider";
 import "@refinedev/antd/dist/reset.css";
 import Script from "next/script";
 import {

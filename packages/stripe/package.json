@@ -1,6 +1,7 @@
 {
-  "name": "stripe",
+  "name": "stripe-package",
   "packageManager": "yarn@4.7.0",
+  "version": "1.0.0",
   "dependencies": {
     "@stripe/stripe-js": "^7.1.0",
     "stripe": "^18.0.0"

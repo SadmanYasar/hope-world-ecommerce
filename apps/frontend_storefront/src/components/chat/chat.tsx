@@ -18,7 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageCircle, Send } from "lucide-react";
 import { Authenticated } from "@refinedev/core";
 import Link from "next/link";
-import { supabaseBrowserClient } from "@utils/supabase/client";
+import { supabaseBrowserClient } from "supabase-package/client";
 
 type Message = {
   id: string;
