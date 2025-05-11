@@ -35,7 +35,7 @@ export default function RootLayout({
                 dataProvider={dataProvider}
                 notificationProvider={notificationProvider}
                 options={{
-                  syncWithLocation: true,
+                  syncWithLocation: false,
                   warnWhenUnsavedChanges: true,
                   useNewQueryKeys: true,
                   projectId: "eG5OPR-xaQxJb-VqAe4M",

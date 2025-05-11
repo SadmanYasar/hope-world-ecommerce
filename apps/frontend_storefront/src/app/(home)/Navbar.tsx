@@ -26,7 +26,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import dynamic from "next/dynamic";
 import { useMediaQuery } from "usehooks-ts";
-import { useGetIdentity, useLogout, useSelect } from "@refinedev/core";
+import {
+  Authenticated,
+  useGetIdentity,
+  useLogout,
+  useSelect,
+} from "@refinedev/core";
 import {
   Select,
   SelectContent,
@@ -164,27 +169,38 @@ const Navbar = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href="/profile" className="flex w-full">
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/order-history" className="flex w-full">
-                    Orders
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/settings" className="flex w-full">
-                    Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => mutate()}>
-                  Logout
-                </DropdownMenuItem>
+                <Authenticated
+                  key={"auth_profile_button"}
+                  fallback={
+                    <DropdownMenuItem>
+                      <Link href="/login" className="flex w-full">
+                        Login
+                      </Link>
+                    </DropdownMenuItem>
+                  }
+                >
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link href="/account" className="flex w-full">
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href="/order-history" className="flex w-full">
+                      Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href="/settings" className="flex w-full">
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => mutate()}>
+                    Logout
+                  </DropdownMenuItem>
+                </Authenticated>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

@@ -181,14 +181,30 @@ export const authProviderClient: AuthProvider = {
     return null;
   },
   getIdentity: async () => {
-    const { data } = await supabaseBrowserClient.auth.getUser();
+    const user = await supabaseBrowserClient.auth.getUser();
 
-    if (data?.user) {
+    const { data: profile } = await supabaseBrowserClient
+      .from("profiles")
+      .select(`full_name, username, avatar_url`)
+      .eq("id", user?.data?.user?.id)
+      .single();
+
+    if (user?.data?.user) {
       return {
-        ...data.user,
-        name: data.user.email,
+        ...user.data.user,
+        name: user.data.user.email,
+        avatar: profile?.avatar_url,
+        username: profile?.username,
+        full_name: profile?.full_name,
       };
     }
+
+    // if (data?.user) {
+    //   return {
+    //     ...data.user,
+    //     name: data.user.email,
+    //   };
+    // }
 
     return null;
   },

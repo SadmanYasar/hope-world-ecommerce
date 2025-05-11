@@ -145,6 +145,17 @@ export default function RootLayout({
                         },
                       },
                       {
+                        name: "subcategories",
+                        list: "/subcategories",
+                        create: "/subcategories/create",
+                        edit: "/subcategories/edit/:id",
+                        show: "/subcategories/show/:id",
+                        meta: {
+                          canDelete: true,
+                          icon: <OrderedListOutlined />,
+                        },
+                      },
+                      {
                         name: "ARCollectible",
                         list: "/ARCollectible",
                         create: "/ARCollectible/create",
@@ -153,6 +164,17 @@ export default function RootLayout({
                         meta: {
                           canDelete: true,
                           icon: <EyeOutlined />,
+                        },
+                      },
+                      {
+                        name: "users",
+                        list: "/users",
+                        create: "/users/create",
+                        edit: "/users/edit/:id",
+                        show: "/users/show/:id",
+                        meta: {
+                          canDelete: true,
+                          icon: <OrderedListOutlined />,
                         },
                       },
                     ]}

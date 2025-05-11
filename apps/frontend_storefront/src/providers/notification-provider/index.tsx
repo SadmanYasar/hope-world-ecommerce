@@ -7,8 +7,8 @@ import { UndoableNotification } from "./undoableNotification";
 export const notificationProvider: NotificationProvider = {
   open: ({ key, message, type, undoableTimeout, cancelMutation }) => {
     if (type === "progress") {
-      if (toast.isActive(key as React.ReactText)) {
-        toast.update(key as React.ReactText, {
+      if (toast.isActive(key as string | number)) {
+        toast.update(key as string | number, {
           progress: undoableTimeout && (undoableTimeout / 10) * 2,
           render: (
             <UndoableNotification
@@ -31,12 +31,12 @@ export const notificationProvider: NotificationProvider = {
             closeButton: false,
             autoClose: false,
             progress: undoableTimeout && (undoableTimeout / 10) * 2,
-          },
+          }
         );
       }
     } else {
-      if (toast.isActive(key as React.ReactText)) {
-        toast.update(key as React.ReactText, {
+      if (toast.isActive(key as string | number)) {
+        toast.update(key as string | number, {
           render: message,
           closeButton: true,
           autoClose: 5000,
