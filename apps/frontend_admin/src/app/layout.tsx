@@ -144,17 +144,17 @@ export default function RootLayout({
                           icon: <OrderedListOutlined />,
                         },
                       },
-                      {
-                        name: "subcategories",
-                        list: "/subcategories",
-                        create: "/subcategories/create",
-                        edit: "/subcategories/edit/:id",
-                        show: "/subcategories/show/:id",
-                        meta: {
-                          canDelete: true,
-                          icon: <OrderedListOutlined />,
-                        },
-                      },
+                      // {
+                      //   name: "subcategories",
+                      //   list: "/subcategories",
+                      //   create: "/subcategories/create",
+                      //   edit: "/subcategories/edit/:id",
+                      //   show: "/subcategories/show/:id",
+                      //   meta: {
+                      //     canDelete: true,
+                      //     icon: <OrderedListOutlined />,
+                      //   },
+                      // },
                       {
                         name: "ARCollectible",
                         list: "/ARCollectible",

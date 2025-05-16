@@ -9,7 +9,7 @@ import { RcFile } from "antd/lib/upload/interface";
 export default function UserEdit() {
   const { formProps, saveButtonProps, query } = useForm({
     meta: {
-      // select: "id, name, description, price, images, category(id,text)",
+      // select: "id, name, description, price, images, category_id(id,text)",
     },
   });
 

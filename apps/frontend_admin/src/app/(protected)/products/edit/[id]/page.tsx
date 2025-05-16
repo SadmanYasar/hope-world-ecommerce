@@ -10,7 +10,7 @@ export default function ProductEdit() {
   const { formProps, saveButtonProps, query } = useForm({
     meta: {
       select:
-        "id, name, description, price, images, category(id,text), visible",
+        "id, name, description, price, images, category, visible",
     },
   });
 
@@ -18,9 +18,9 @@ export default function ProductEdit() {
 
   const { selectProps: categorySelectProps } = useSelect({
     resource: "categories",
-    defaultValue: productsData?.category?.id || "",
-    optionLabel: "text", // Use the "text" field for display
-    optionValue: "id", // Use the "id" field for value
+    defaultValue: productsData?.category || "",
+    optionLabel: "text",
+    optionValue: "id",
     queryOptions: {
       enabled: !!productsData,
     },
@@ -28,7 +28,10 @@ export default function ProductEdit() {
 
   return (
     <Edit saveButtonProps={saveButtonProps} isLoading={query?.isLoading}>
-      <Form {...formProps} layout="vertical">
+      <Form
+        {...formProps}
+        layout="vertical"
+      >
         <Form.Item
           label={"Name"}
           name={["name"]}
@@ -53,8 +56,8 @@ export default function ProductEdit() {
         </Form.Item>
         <Form.Item
           label={"Category"}
-          name={"category.id"}
-          initialValue={formProps?.initialValues?.category?.id}
+          name={"category"}
+          initialValue={formProps?.initialValues?.category}
           rules={[
             {
               required: true,

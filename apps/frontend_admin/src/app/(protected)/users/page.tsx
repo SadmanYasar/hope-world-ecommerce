@@ -17,7 +17,7 @@ export default function UserList() {
     syncWithLocation: false,
     resource: "user_roles",
     meta: {
-      // select: "id, name, description, price, images, category(id,text)",
+      // select: "id, name, description, price, images, category_id(id,text)",
     },
   });
 
