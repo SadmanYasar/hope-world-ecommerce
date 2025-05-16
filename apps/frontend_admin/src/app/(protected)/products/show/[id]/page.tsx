@@ -18,7 +18,8 @@ export default function ProductShow() {
   const { query } = useShow({
     // MIGHT USE THIS FOR REVIEWS
     meta: {
-      select: "id, name, description, price, images, category(id,text)",
+      select:
+        "id, name, description, price, images, category(id,text), visible",
     },
   });
   const { data, isLoading } = query;
@@ -67,6 +68,8 @@ export default function ProductShow() {
       <NumberField value={record?.stock} /> */}
       <Title level={5}>{"Price"}</Title>
       <NumberField value={record?.price} />
+      <Title level={5}>{"Visible"}</Title>
+      <TextField value={record?.visible ? "True" : "False"} />
     </Show>
   );
 }

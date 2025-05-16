@@ -9,7 +9,8 @@ import { RcFile } from "antd/lib/upload/interface";
 export default function ProductEdit() {
   const { formProps, saveButtonProps, query } = useForm({
     meta: {
-      select: "id, name, description, price, images, category(id,text)",
+      select:
+        "id, name, description, price, images, category(id,text), visible",
     },
   });
 
@@ -126,17 +127,25 @@ export default function ProductEdit() {
         >
           <InputNumber />
         </Form.Item>
-        {/* <Form.Item
-          label={"Stock"}
-          name={["stock"]}
+        <Form.Item
+          label={"Visible"}
+          name={["visible"]}
+          valuePropName="checked"
           rules={[
             {
               required: true,
             },
           ]}
         >
-          <InputNumber />
-        </Form.Item> */}
+          <Select
+            options={[
+              { label: "True", value: true },
+              { label: "False", value: false },
+            ]}
+            style={{ width: "100%" }}
+            defaultValue={productsData?.visible ? true : false}
+          />
+        </Form.Item>
       </Form>
     </Edit>
   );

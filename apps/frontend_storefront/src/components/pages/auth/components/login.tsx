@@ -256,7 +256,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                       className="p-2 mb-2 border border-gray-300 rounded-md"
                     />
                   </div>
-                  {rememberMe ?? (
+                  {/* {rememberMe ?? (
                     <>
                       <Label htmlFor="remember-me-input">
                         {translate(
@@ -276,7 +276,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                         />
                       </Label>
                     </>
-                  )}
+                  )} */}
                   <br />
                   {forgotPasswordLink ?? (
                     <span className="text-sm">

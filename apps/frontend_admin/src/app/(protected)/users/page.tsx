@@ -14,7 +14,8 @@ import { Space, Table, Image } from "antd";
 
 export default function UserList() {
   const { tableProps, sorters, filters } = useTable({
-    syncWithLocation: true,
+    syncWithLocation: false,
+    resource: "user_roles",
     meta: {
       // select: "id, name, description, price, images, category(id,text)",
     },

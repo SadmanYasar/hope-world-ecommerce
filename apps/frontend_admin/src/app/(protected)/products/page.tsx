@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
 import {
   useTable,
   useSelect,
@@ -58,7 +57,7 @@ export default function ProductsPage() {
     syncWithLocation: true,
     meta: {
       select:
-        "id, name, description, price, images, category(id,text), created_at",
+        "id, name, description, price, images, category(id,text), created_at, visible",
     },
     sorters: {
       initial: [
@@ -171,6 +170,13 @@ export default function ProductsPage() {
                 render={(value) => <DateField format="LLL" value={value} />}
                 sorter
                 defaultSortOrder={getDefaultSortOrder("created_at")}
+              />
+              <Table.Column
+                dataIndex="visible"
+                title="Visible"
+                render={(value) => (value ? "Yes" : "No")}
+                sorter
+                defaultSortOrder={getDefaultSortOrder("visible")}
               />
               <Table.Column<IProduct>
                 title="Actions"

@@ -17,7 +17,16 @@ type CartItem = {
   image: string;
 };
 
-export async function createCheckoutSession(items: CartItem[]) {
+type CustomerInfo = {
+  email?: string;
+  name?: string;
+  userId?: string;
+};
+
+export async function createCheckoutSession(
+  items: CartItem[],
+  customerInfo?: CustomerInfo
+) {
   if (!items.length) {
     throw new Error("Cart is empty");
   }
@@ -46,7 +55,15 @@ export async function createCheckoutSession(items: CartItem[]) {
       cancel_url: `${PUBLIC_URL}/cart?error=transaction_cancelled`,
       metadata: {
         cartItemCount: items.length.toString(),
+        userId: customerInfo?.userId || "",
+        items: JSON.stringify(
+          items.map((item) => ({
+            id: item.id,
+            quantity: item.quantity,
+          }))
+        ),
       },
+      customer_email: customerInfo?.email,
     });
 
     url = checkoutSession.url;

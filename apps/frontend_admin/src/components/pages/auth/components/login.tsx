@@ -214,7 +214,7 @@ export const LoginPage: React.FC<LoginProps> = ({
               marginBottom: "24px",
             }}
           >
-            {rememberMe ?? (
+            {/* {rememberMe ?? (
               <Form.Item name="remember" valuePropName="checked" noStyle>
                 <Checkbox
                   style={{
@@ -224,7 +224,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                   {translate("pages.login.buttons.rememberMe", "Remember me")}
                 </Checkbox>
               </Form.Item>
-            )}
+            )} */}
             {forgotPasswordLink ?? (
               <ActiveLink
                 style={{

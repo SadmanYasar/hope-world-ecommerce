@@ -61,6 +61,11 @@ export default function ProductsPage() {
           operator: "containss",
           value: debouncedSearch,
         },
+        {
+          field: "visible",
+          operator: "eq",
+          value: true,
+        },
         ...(category && category !== "all"
           ? ([
               {

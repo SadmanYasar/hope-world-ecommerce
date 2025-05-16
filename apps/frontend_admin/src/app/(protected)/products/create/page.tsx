@@ -102,6 +102,25 @@ export default function ProductCreate() {
         >
           <InputNumber />
         </Form.Item>
+        {/* Input to set visibility field which will be a dropdown of value true or false */}
+        <Form.Item
+          label={"Visible"}
+          name={["visible"]}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            options={[
+              { label: "True", value: true },
+              { label: "False", value: false },
+            ]}
+            defaultValue={true}
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
       </Form>
     </Create>
   );
