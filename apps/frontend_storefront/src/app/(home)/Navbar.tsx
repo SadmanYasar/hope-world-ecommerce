@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -44,11 +44,15 @@ import { useFilterStore } from "@/store/filter-store";
 import { useCartStore } from "@/store/cart-store";
 import { useDebounce } from "@components/ui/multiple-selector";
 import { set } from "date-fns";
+import { downloadImage } from "supabase-package/utils/downloadImage";
+import { supabaseBrowserClient } from "supabase-package/client";
+import { UserData } from "@types";
 
 const Navbar = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { data: userData } = useGetIdentity();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const { data: userData } = useGetIdentity<UserData>();
   const { mutate } = useLogout();
 
   // Filter store
@@ -84,6 +88,20 @@ const Navbar = () => {
     },
   });
 
+  useEffect(() => {
+    // Download avatar image if user data is available
+    if (userData?.avatar_url) {
+      downloadImage({
+        path: userData.avatar_url,
+        callBackSuccess: (url) => setAvatarUrl(url),
+        callBackError: () => setAvatarUrl(null),
+      });
+    } else {
+      setAvatarUrl(null);
+    }
+  }, [userData?.avatar_url]);
+
+  console.log("Navbar userData", userData);
   // const handleSearch = (e: React.FormEvent) => {
   //   e.preventDefault();
   //   // Implement search functionality
@@ -163,7 +181,11 @@ const Navbar = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src="/avatar.png" alt="User" />
+                    <AvatarImage
+                      key={avatarUrl}
+                      src={avatarUrl || "/avatar.png"}
+                      alt="User"
+                    />
                     <AvatarFallback>U</AvatarFallback>
                   </Avatar>
                 </Button>
@@ -191,11 +213,11 @@ const Navbar = () => {
                       Orders
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  {/* <DropdownMenuItem>
                     <Link href="/settings" className="flex w-full">
                       Settings
                     </Link>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => mutate()}>
                     Logout

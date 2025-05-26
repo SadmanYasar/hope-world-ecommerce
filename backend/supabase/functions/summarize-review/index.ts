@@ -13,6 +13,11 @@ Deno.serve(async (req) => {
     message: `Hello ${name}!`,
   }
 
+  //TODO
+  //get list of reviews for a product id
+  //pass the relevant reviews to Gemini or gte-small to summarize
+  //return the summary
+
   return new Response(
     JSON.stringify(data),
     { headers: { "Content-Type": "application/json" } },

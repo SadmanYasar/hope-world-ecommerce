@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useCartStore } from "@/store/cart-store";
 import { loadStripe } from "@stripe/stripe-js";
-import { Authenticated } from "@refinedev/core";
+import { Authenticated, useGetIdentity } from "@refinedev/core";
 import { createCheckoutSession } from "../actions/checkout";
 import { Button } from "@components/ui/button";
 import {
@@ -16,6 +16,7 @@ import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeftCircle } from "lucide-react";
+import { UserData } from "@types";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -31,6 +32,7 @@ const CartPage = () => {
     updateQuantity,
   } = useCartStore();
   const [loading, setLoading] = useState(false);
+  const { data: user } = useGetIdentity<UserData>();
 
   const router = useRouter();
 
@@ -38,7 +40,10 @@ const CartPage = () => {
     e.preventDefault();
     setLoading(true);
     // Use the server action to create a checkout session
-    await createCheckoutSession(items);
+    await createCheckoutSession(items, {
+      userId: user?.id,
+      email: user?.email,
+    });
   };
 
   return (

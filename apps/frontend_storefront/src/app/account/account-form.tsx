@@ -17,9 +17,11 @@ import {
 import { Input } from "@/components/ui/input";
 import Dropzone, { type DropzoneState } from "react-dropzone";
 import { supabaseBrowserClient } from "supabase-package/client";
+import { downloadImage } from "supabase-package/utils/downloadImage";
 import { useLogout, useNotification } from "@refinedev/core";
 import Link from "next/link";
 import { ArrowLeftCircle } from "lucide-react";
+import { set } from "date-fns";
 
 const DropzoneContent = ({
   isDragAccept,
@@ -91,7 +93,11 @@ export default function AccountForm({ user }: { user: User | null }) {
 
   useEffect(() => {
     if (watchedAvatarUrl) {
-      downloadImage(watchedAvatarUrl);
+      downloadImage({
+        path: watchedAvatarUrl,
+        callBackSuccess: (url) => setAvatarUrl(url),
+        callBackError: () => setAvatarUrl(null),
+      });
     } else {
       setAvatarUrl(null);
     }
@@ -105,25 +111,25 @@ export default function AccountForm({ user }: { user: User | null }) {
     }
   }, [query?.data?.data?.avatar_url, setValue]);
 
-  async function downloadImage(path: string) {
-    try {
-      const { data, error } = await supabaseBrowserClient.storage
-        .from("avatars")
-        .download(path);
+  // async function downloadImage(path: string) {
+  //   try {
+  //     const { data, error } = await supabaseBrowserClient.storage
+  //       .from("avatars")
+  //       .download(path);
 
-      if (error) {
-        console.error("Error downloading image:", error);
-        setAvatarUrl(null);
-        return;
-      }
+  //     if (error) {
+  //       console.error("Error downloading image:", error);
+  //       setAvatarUrl(null);
+  //       return;
+  //     }
 
-      const url = URL.createObjectURL(data);
-      setAvatarUrl(url);
-    } catch (error) {
-      console.error("Error downloading image:", error);
-      setAvatarUrl(null);
-    }
-  }
+  //     const url = URL.createObjectURL(data);
+  //     setAvatarUrl(url);
+  //   } catch (error) {
+  //     console.error("Error downloading image:", error);
+  //     setAvatarUrl(null);
+  //   }
+  // }
 
   const handleAvatarUpload = async (acceptedFiles: File[]) => {
     if (!user) return;

@@ -17,12 +17,15 @@ export default function UserList() {
     syncWithLocation: false,
     resource: "user_roles",
     meta: {
-      // select: "id, name, description, price, images, category_id(id,text)",
+      select: "id, role, user_id(id, name, email)",
     },
   });
 
+  console.log("tableProps", tableProps);
+
   return (
-    <List>
+    <>
+      {/* <List>
       <Table {...tableProps} rowKey="id" scroll={{ x: true }}>
         <Table.Column dataIndex="id" title={"ID"} />
         <Table.Column dataIndex="name" title={"Name"} />
@@ -80,6 +83,7 @@ export default function UserList() {
           )}
         />
       </Table>
-    </List>
+    </List> */}
+    </>
   );
 }

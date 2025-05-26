@@ -3,11 +3,14 @@
 import { PUBLIC_URL } from "supabase-package/utils/constants";
 // import { createSupabaseServerClient } from "supabase-package/server";
 import { redirect } from "next/navigation";
+// import stripe from "stripe-package";
+import Stripe from "stripe";
 
-import stripe from "stripe-package";
-// import Stripe from "stripe";
-
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  // This is needed to use the Fetch API rather than relying on the Node http
+  // package.
+  apiVersion: "2025-03-31.basil",
+});
 
 type CartItem = {
   id: string;
@@ -29,6 +32,11 @@ export async function createCheckoutSession(
 ) {
   if (!items.length) {
     throw new Error("Cart is empty");
+  }
+
+  // Validate required userId
+  if (!customerInfo?.userId) {
+    throw new Error("User ID is required for checkout");
   }
 
   let url;
@@ -55,7 +63,7 @@ export async function createCheckoutSession(
       cancel_url: `${PUBLIC_URL}/cart?error=transaction_cancelled`,
       metadata: {
         cartItemCount: items.length.toString(),
-        userId: customerInfo?.userId || "",
+        userId: customerInfo.userId,
         items: JSON.stringify(
           items.map((item) => ({
             id: item.id,
@@ -67,9 +75,6 @@ export async function createCheckoutSession(
     });
 
     url = checkoutSession.url;
-
-    // Simple return with just the URL - no redirection attempt
-    // return { url: checkoutSession.url };
   } catch (error) {
     console.error("Error creating checkout session:", error);
     throw new Error("Failed to create checkout session");

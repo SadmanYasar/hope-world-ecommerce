@@ -14,7 +14,7 @@ export const authProviderClient: AuthProvider = {
       }
     );
 
-    console.log("Im called from packages!")
+    console.log("Im called from packages!");
 
     if (error) {
       return {
@@ -209,7 +209,7 @@ export const authProviderClient: AuthProvider = {
       return {
         ...user.data.user,
         name: user.data.user.email,
-        avatar: profile?.avatar_url,
+        avatar_url: profile?.avatar_url,
         username: profile?.username,
         first_name: profile?.first_name,
         last_name: profile?.last_name,
