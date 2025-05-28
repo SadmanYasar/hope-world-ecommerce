@@ -9304,6 +9304,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"live-provider@workspace:packages/live-provider":
+  version: 0.0.0-use.local
+  resolution: "live-provider@workspace:packages/live-provider"
+  languageName: unknown
+  linkType: soft
+
 "load-json-file@npm:^4.0.0":
   version: 4.0.0
   resolution: "load-json-file@npm:4.0.0"

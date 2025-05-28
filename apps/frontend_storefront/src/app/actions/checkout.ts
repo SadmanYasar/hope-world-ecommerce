@@ -72,6 +72,20 @@ export async function createCheckoutSession(
         ),
       },
       customer_email: customerInfo?.email,
+      // billing_address_collection: "required",
+      phone_number_collection: {
+        enabled: true,
+      },
+      // automatic_tax: {
+      //   enabled: true,
+      // },
+      shipping_address_collection: {
+        allowed_countries: ["BD", "MY", "SK", "TH", "JP"],
+      },
+      // customer_update: {
+      //   address: "auto",
+      //   name: "auto",
+      // },
     });
 
     url = checkoutSession.url;

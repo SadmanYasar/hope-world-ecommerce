@@ -2,6 +2,7 @@ import { DevtoolsProvider } from "@providers/devtools";
 import { GitHubBanner, Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import routerProvider from "@refinedev/nextjs-router";
+import liveProvider from "live-provider";
 import { Metadata } from "next";
 import React, { Suspense } from "react";
 
@@ -11,6 +12,7 @@ import { dataProvider } from "data-provider-package";
 import "@styles/global.css";
 import { notificationProvider } from "@providers/notification-provider";
 import ToastProvider from "@providers/notification-provider/toast.provider";
+import { supabaseBrowserClient } from "supabase-package/client";
 
 export const metadata: Metadata = {
   title: "Hope World",
@@ -36,6 +38,7 @@ export default function RootLayout({
                 authProvider={authProviderClient}
                 dataProvider={dataProvider}
                 notificationProvider={notificationProvider}
+                liveProvider={liveProvider}
                 options={{
                   syncWithLocation: false,
                   warnWhenUnsavedChanges: true,
