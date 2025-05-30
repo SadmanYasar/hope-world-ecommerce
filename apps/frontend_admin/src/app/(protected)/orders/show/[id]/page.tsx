@@ -27,20 +27,27 @@ export default function OrderShow() {
 
   console.log("record", record);
 
+  const formatCurrency = (amount: number | undefined | null) => {
+    if (amount === undefined || amount === null || isNaN(amount)) {
+      return "$0.00";
+    }
+    return `$${(amount / 100).toFixed(2)}`;
+  };
+
   const statusColumns = [
-    { 
-      title: "Date", 
-      dataIndex: "date", 
+    {
+      title: "Date",
+      dataIndex: "date",
       key: "date",
       render: (date: string) => {
         if (!date) return "-";
         // Handle dates with single-digit days by normalizing the format
         try {
           // Parse the date parts
-          const parts = date.split('/');
+          const parts = date.split("/");
           if (parts.length === 3) {
-            const month = parts[0].padStart(2, '0');
-            const day = parts[1].padStart(2, '0');
+            const month = parts[0].padStart(2, "0");
+            const day = parts[1].padStart(2, "0");
             const year = parts[2];
             return `${month}/${day}/${year}`;
           }
@@ -49,7 +56,7 @@ export default function OrderShow() {
           console.error("Error parsing date:", error);
           return date;
         }
-      }
+      },
     },
     {
       title: "Status",
@@ -120,7 +127,7 @@ export default function OrderShow() {
       render: (_: any, record: any) =>
         record?.product?.id ? (
           <Link
-            href={`/products/${record.product.id}`}
+            href={`/products/show/${record.product.id}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -134,20 +141,30 @@ export default function OrderShow() {
 
   const formatAddress = (addressObj: any) => {
     if (!addressObj) return "-";
-    
+
     // Convert address object to string if it's an object
-    if (typeof addressObj === 'object') {
-      const { name, line1, line2, city, state, postal_code, country } = addressObj;
+    if (typeof addressObj === "object") {
+      const { name, line1, line2, city, state, postal_code, country } =
+        addressObj;
       return (
         <div>
-          {name && <div><strong>{name}</strong></div>}
-          <div>{line1}{line2 ? `, ${line2}` : ''}</div>
-          <div>{city}, {state} {postal_code}</div>
+          {name && (
+            <div>
+              <strong>{name}</strong>
+            </div>
+          )}
+          <div>
+            {line1}
+            {line2 ? `, ${line2}` : ""}
+          </div>
+          <div>
+            {city}, {state} {postal_code}
+          </div>
           <div>{country}</div>
         </div>
       );
     }
-    
+
     return addressObj;
   };
 
@@ -160,10 +177,7 @@ export default function OrderShow() {
       <DateField value={record?.created_at} />
 
       <Title level={5}>{"Total Amount"}</Title>
-      <NumberField
-        value={record?.total_amount}
-        options={{ style: "currency", currency: "USD" }}
-      />
+      <Text>{formatCurrency(record?.total_amount)}</Text>
 
       <Title level={5}>{"Customer Email"}</Title>
       <TextField value={record?.customer_email} />

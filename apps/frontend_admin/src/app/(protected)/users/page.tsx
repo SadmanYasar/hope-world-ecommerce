@@ -1,23 +1,17 @@
 "use client";
 
-import {
-  DateField,
-  DeleteButton,
-  EditButton,
-  List,
-  MarkdownField,
-  ShowButton,
-  useTable,
-} from "@refinedev/antd";
-import { useMany, type BaseRecord } from "@refinedev/core";
-import { Space, Table, Image } from "antd";
+import { useTable } from "@refinedev/antd";
+import { bucket_url } from "@utils/supabase/config";
+import { Space, Table, Image, Tag } from "antd";
 
 export default function UserList() {
   const { tableProps, sorters, filters } = useTable({
     syncWithLocation: false,
-    resource: "user_roles",
+    resource: "profiles_with_roles",
     meta: {
-      select: "id, role, user_id(id, name, email)",
+      select: `
+        *
+      `,
     },
   });
 
@@ -25,65 +19,63 @@ export default function UserList() {
 
   return (
     <>
-      {/* <List>
       <Table {...tableProps} rowKey="id" scroll={{ x: true }}>
-        <Table.Column dataIndex="id" title={"ID"} />
-        <Table.Column dataIndex="name" title={"Name"} />
+        <Table.Column dataIndex="username" title="Username" />
+        <Table.Column dataIndex="first_name" title="First Name" />
+        <Table.Column dataIndex="last_name" title="Last Name" />
         <Table.Column
-          dataIndex="category"
-          title={"Category"}
-          render={(value: any) => {
-            if (!value) return "-";
-            return value.text;
+          title="Role"
+          render={(record) => {
+            const role = record.role || "";
+            return (
+              <Space>
+                {role ? (
+                  <Tag color="blue" key={role}>
+                    {String(role).toUpperCase()}
+                  </Tag>
+                ) : (
+                  <Tag color="default">No Role</Tag>
+                )}
+              </Space>
+            );
           }}
         />
         <Table.Column
-          dataIndex="description"
-          title={"Description"}
-          render={(value: any) => {
-            if (!value) return "-";
-            return <MarkdownField value={value.slice(0, 80) + "..."} />;
-          }}
-        />
-        <Table.Column
-          dataIndex="images"
-          title={"Images"}
+          dataIndex="avatar_url"
+          title="Avatar"
+          // render={(value) =>
+          //   value ? (
+          //     <Image
+          //       src={value}
+          //       width={50}
+          //       height={50}
+          //       style={{ objectFit: "cover", borderRadius: "50%" }}
+          //       alt=""
+          //     />
+          //   ) : (
+          //     "No Avatar"
+          //   )
+          // }
           render={(value: any) => {
             if (!value) return "-";
             return (
               <Image.PreviewGroup>
-                {JSON.parse(value).map((image: any, index: number) => (
-                  <Image
-                    width={50}
-                    height={50}
-                    src={image.url}
-                    key={index}
-                    alt=""
-                    style={{
-                      borderRadius: "5px",
-                      padding: "1px",
-                      objectFit: "cover",
-                    }}
-                  />
-                ))}
+                <Image
+                  width={50}
+                  height={50}
+                  src={bucket_url + value}
+                  alt=""
+                  style={{
+                    borderRadius: "5px",
+                    padding: "1px",
+                    objectFit: "cover",
+                  }}
+                />
               </Image.PreviewGroup>
             );
           }}
         />
-        <Table.Column dataIndex="price" title={"Price"} />
-        <Table.Column
-          title={"Actions"}
-          dataIndex="actions"
-          render={(_, record: BaseRecord) => (
-            <Space>
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
-            </Space>
-          )}
-        />
       </Table>
-    </List> */}
     </>
   );
 }
