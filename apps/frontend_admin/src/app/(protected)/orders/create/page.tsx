@@ -1,113 +1,115 @@
 "use client";
 
-import { Create, useForm, useSelect } from "@refinedev/antd";
-import { supabaseBrowserClient } from "supabase-package/client";
-import { normalizeFile } from "@utils/supabase/normalize";
-import { Form, Input, InputNumber, Upload } from "antd";
-import { RcFile } from "antd/lib/upload/interface";
+import { Create, useForm } from "@refinedev/antd";
+import { Form, Input, InputNumber, Button, DatePicker, Select } from "antd";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
-export default function ProductCreate() {
+export default function OrderCreate() {
   const { formProps, saveButtonProps } = useForm({});
+
+  const statusOptions = [
+    { label: "Ordered", value: "Ordered" },
+    { label: "Dispatched", value: "Dispatched" },
+    { label: "In Transit", value: "In Transit" },
+    { label: "Delivered", value: "Delivered" },
+    { label: "Cancelled", value: "Cancelled" },
+  ];
 
   return (
     <Create saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
         <Form.Item
-          label={"Name"}
-          name={["name"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={"Total Amount"}
+          name={["total_amount"]}
+          rules={[{ required: true }]}
+        >
+          <InputNumber prefix="$" style={{ width: "100%" }} />
+        </Form.Item>
+
+        <Form.Item
+          label={"Customer Email"}
+          name={["customer_email"]}
+          rules={[{ required: true, type: "email" }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          label={"Description"}
-          name="description"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input.TextArea rows={5} />
-        </Form.Item>
-        <Form.Item
-          label={"Category"}
-          name={["category"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
+
+        <Form.Item label={"Customer Phone"} name={["customer_phone"]}>
           <Input />
         </Form.Item>
-        <Form.Item label="Images">
-          <Form.Item
-            name="images"
-            valuePropName="fileList"
-            normalize={(event) => {
-              const normalized = normalizeFile(event);
-              return normalized.length > 0 ? [normalized[0]] : [];
-            }}
-            noStyle
-          >
-            <Upload.Dragger
-              name="file"
-              listType="picture"
-              accept="image/png, image/jpeg"
-              maxCount={2}
-              customRequest={async ({ file, onError, onSuccess }) => {
-                try {
-                  const rcFile = file as RcFile;
-                  await supabaseBrowserClient.storage
-                    .from("Product")
-                    .upload(`public/${rcFile.name}`, file, {
-                      cacheControl: "3600",
-                      upsert: true,
-                    });
 
-                  const { data } = await supabaseBrowserClient.storage
-                    .from("Product")
-                    .getPublicUrl(`public/${rcFile.name}`);
+        <Form.Item
+          label={"Billing Address"}
+          name={["billing_address"]}
+          rules={[{ required: true }]}
+        >
+          <Input.TextArea rows={3} />
+        </Form.Item>
 
-                  const xhr = new XMLHttpRequest();
-                  onSuccess?.({ url: data?.publicUrl }, xhr);
-                } catch (error) {
-                  onError?.(new Error("Upload Error"));
-                }
-              }}
-            >
-              <p className="ant-upload-text">
-                Drag and drop an image (png/jpg, 2 Images, Max 5MB)
-              </p>
-            </Upload.Dragger>
-          </Form.Item>
-        </Form.Item>
         <Form.Item
-          label={"Price"}
-          name={["price"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={"Shipping Address"}
+          name={["shipping_address"]}
+          rules={[{ required: true }]}
         >
-          <InputNumber />
+          <Input.TextArea rows={3} />
         </Form.Item>
+
         <Form.Item
-          label={"Stock"}
-          name={["stock"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label={"Status Timeline"}
+          initialValue={[{ status: "Ordered" }]}
         >
-          <InputNumber />
+          <Form.List name={["status"]}>
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <div
+                    key={key}
+                    style={{
+                      display: "flex",
+                      marginBottom: 8,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, "date"]}
+                      style={{ marginRight: 8, flex: 1 }}
+                    >
+                      <DatePicker
+                        placeholder="Select date"
+                        style={{ width: "100%" }}
+                        format="MM/DD/YYYY"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "status"]}
+                      style={{ marginRight: 8, flex: 1 }}
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        placeholder="Select status"
+                        options={statusOptions}
+                      />
+                    </Form.Item>
+                    {fields.length > 1 && (
+                      <MinusCircleOutlined onClick={() => remove(name)} />
+                    )}
+                  </div>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Status
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
         </Form.Item>
       </Form>
     </Create>

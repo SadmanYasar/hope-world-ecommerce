@@ -2,7 +2,7 @@
 
 import { ColorModeContext } from "@contexts/color-mode";
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
-import { useGetIdentity } from "@refinedev/core";
+import { useGetIdentity, useLogout } from "@refinedev/core";
 import {
   Avatar,
   Layout as AntdLayout,
@@ -10,8 +10,17 @@ import {
   Switch,
   theme,
   Typography,
+  Dropdown,
+  Menu,
 } from "antd";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  UserOutlined,
+  SettingOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
+import Link from "next/link";
+import { downloadImage } from "supabase-package/utils/downloadImage";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -20,14 +29,20 @@ type IUser = {
   id: number;
   name: string;
   avatar: string;
+  avatar_url?: string;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
 };
 
 export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   sticky = true,
 }) => {
   const { token } = useToken();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
+  const { mutate: logout } = useLogout();
 
   const headerStyles: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
@@ -44,6 +59,43 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     headerStyles.zIndex = 1;
   }
 
+  const displayName =
+    user?.name ||
+    user?.username ||
+    (user?.first_name && user?.last_name
+      ? `${user.first_name} ${user.last_name}`
+      : user?.first_name || user?.last_name || "User");
+
+  const userMenu = (
+    <Menu
+      items={[
+        {
+          key: "profile",
+          icon: <UserOutlined />,
+          label: <Link href="/profile">Profile</Link>,
+        },
+        {
+          key: "logout",
+          icon: <LogoutOutlined />,
+          label: <a onClick={() => logout()}>Logout</a>,
+        },
+      ]}
+    />
+  );
+
+  useEffect(() => {
+    // Download avatar image if user data is available
+    if (user?.avatar_url) {
+      downloadImage({
+        path: user.avatar_url,
+        callBackSuccess: (url) => setAvatarUrl(url),
+        callBackError: () => setAvatarUrl(null),
+      });
+    } else {
+      setAvatarUrl(null);
+    }
+  }, [user?.avatar_url]);
+
   return (
     <AntdLayout.Header style={headerStyles}>
       <Space>
@@ -53,11 +105,26 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
           onChange={() => setMode(mode === "light" ? "dark" : "light")}
           defaultChecked={mode === "dark"}
         />
-        {(user?.name || user?.avatar) && (
-          <Space style={{ marginLeft: "8px" }} size="middle">
-            {user?.name && <Text strong>{user.name}</Text>}
-            {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
-          </Space>
+        {(displayName || user?.avatar || user?.avatar_url) && (
+          <Dropdown overlay={userMenu} trigger={["click"]}>
+            <Space
+              style={{ marginLeft: "8px", cursor: "pointer" }}
+              size="middle"
+            >
+              {displayName && <Text strong>{displayName}</Text>}
+              <Avatar
+                src={avatarUrl || user?.avatar || user?.avatar_url}
+                alt={displayName}
+                icon={
+                  !user?.avatar && !user?.avatar_url ? (
+                    <UserOutlined />
+                  ) : (
+                    <Avatar src={avatarUrl || user?.avatar_url} />
+                  )
+                }
+              />
+            </Space>
+          </Dropdown>
         )}
       </Space>
     </AntdLayout.Header>

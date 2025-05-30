@@ -12,6 +12,8 @@ import { AppIcon } from "@components/app-icon";
 import { ColorModeContextProvider } from "@contexts/color-mode";
 import { dataProvider } from "data-provider-package";
 import { authProviderClient } from "auth-provider-client";
+import liveProvider from "live-provider";
+
 import "@refinedev/antd/dist/reset.css";
 import Script from "next/script";
 import {
@@ -43,28 +45,6 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      {/* <head>
-        <Script
-          strategy="beforeInteractive"
-          src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"
-        />
-        <Script
-          strategy="beforeInteractive"
-          src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"
-        />
-        <Script
-          strategy="beforeInteractive"
-          src="https://aframe.io/releases/0.9.2/aframe.min.js"
-        />
-        <Script
-          strategy="beforeInteractive"
-          src="https://raw.githack.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"
-        />
-        <Script
-          strategy="beforeInteractive"
-          src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"
-        />
-      </head> */}
       <body>
         <Suspense>
           <RefineKbarProvider>
@@ -76,6 +56,7 @@ export default function RootLayout({
                     authProvider={authProviderClient}
                     dataProvider={dataProvider}
                     notificationProvider={useNotificationProvider}
+                    liveProvider={liveProvider}
                     resources={[
                       {
                         name: "email",

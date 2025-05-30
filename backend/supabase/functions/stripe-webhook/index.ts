@@ -3,39 +3,30 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.36.0?target
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"), {
   // This is needed to use the Fetch API rather than relying on the Node http
   // package.
-  apiVersion: "2025-03-31.basil",
+  apiVersion: "2025-05-28.basil",
 });
 // This is needed in order to use the Web Crypto API in Deno.
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 // Create a Supabase client
-const supabase = createClient(
-  Deno.env.get("SUPABASE_URL"),
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
-);
+const supabase = createClient(Deno.env.get("SUPABASE_URL"), Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"));
 console.log("Hello from Stripe Webhook!");
-Deno.serve(async (request) => {
+Deno.serve(async (request)=>{
   const signature = request.headers.get("Stripe-Signature");
   const body = await request.text();
   let receivedEvent;
   try {
     console.log("Stripe signature and body", signature, body);
-    receivedEvent = await stripe.webhooks.constructEventAsync(
-      body,
-      signature,
-      Deno.env.get("STRIPE_WEBHOOK_SIGNIN_SECRET"),
-      undefined,
-      cryptoProvider
-    );
+    receivedEvent = await stripe.webhooks.constructEventAsync(body, signature, Deno.env.get("STRIPE_WEBHOOK_SIGNIN_SECRET"), undefined, cryptoProvider);
   } catch (err) {
     console.error("Error verifying webhook signature:", err);
     return new Response(err?.message, {
-      status: 400,
+      status: 400
     });
   }
   console.log(`🔔 Event received: ${receivedEvent.type}`);
   // Handle different event types
   try {
-    switch (receivedEvent.type) {
+    switch(receivedEvent.type){
       case "checkout.session.completed":
         await handleCheckoutCompleted(receivedEvent.data.object);
         break;
@@ -52,22 +43,112 @@ Deno.serve(async (request) => {
   } catch (error) {
     console.error(`❌ Error handling event ${receivedEvent.type}:`, error);
     return new Response(`Error processing ${receivedEvent.type}`, {
-      status: 500,
+      status: 500
     });
   }
-  return new Response(
-    JSON.stringify({
-      ok: true,
-    }),
-    {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
+  return new Response(JSON.stringify({
+    ok: true
+  }), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json"
     }
-  );
+  });
 });
-
+// async function handleCheckoutCompleted(session) {
+//   console.log("🛒 Processing checkout completion:", session.id);
+//   const { metadata, amount_total } = session;
+//   // Validate required metadata
+//   if (!metadata?.userId || !metadata?.items) {
+//     console.error("❌ Missing required metadata:", {
+//       hasUserId: !!metadata?.userId,
+//       hasItems: !!metadata?.items,
+//     });
+//     console.log("Metadata:", metadata);
+//     throw new Error("Missing required metadata: userId or items");
+//   }
+//   const userId = metadata.userId;
+//   let items;
+//   try {
+//     items = JSON.parse(metadata.items);
+//   } catch (error) {
+//     console.error("❌ Invalid items JSON in metadata:", error);
+//     throw new Error("Invalid items JSON in metadata");
+//   }
+//   // Validate items structure
+//   if (!Array.isArray(items) || items.length === 0) {
+//     console.error("❌ Invalid items array:", items);
+//     throw new Error("Items must be a non-empty array");
+//   }
+//   // Validate each item has required fields
+//   for (const item of items) {
+//     if (!item.id || !item.quantity || item.quantity <= 0) {
+//       console.error("❌ Invalid item structure:", item);
+//       throw new Error(`Invalid item structure: ${JSON.stringify(item)}`);
+//     }
+//   }
+//   console.log("📦 Creating order:", {
+//     userId,
+//     sessionId: session.id,
+//     totalAmount: amount_total,
+//     itemsCount: items.length,
+//   });
+//   // Call the RPC function to create the order
+//   const { data: result, error } = await supabase.rpc(
+//     "create_order_from_stripe",
+//     {
+//       p_user_id: userId,
+//       p_stripe_session_id: session.id,
+//       p_total_amount: amount_total,
+//       p_items: items,
+//     }
+//   );
+//   if (error) {
+//     console.error("❌ RPC call failed:", error);
+//     throw new Error(`RPC call failed: ${error.message}`);
+//   }
+//   if (!result?.success) {
+//     console.error("❌ Order creation failed:", result);
+//     throw new Error(
+//       `Order creation failed: ${result?.error || "Unknown error"}`
+//     );
+//   }
+//   console.log("✅ Order created successfully:", {
+//     orderId: result.order_id,
+//     productsCount: result.products_count,
+//     totalAmount: result.total_amount,
+//   });
+//   // Optional: Send confirmation email or other post-processing
+//   await postOrderProcessing(result, session);
+// }
+// async function postOrderProcessing(orderResult, session) {
+//   // This is where you could add additional processing like:
+//   // - Send order confirmation email
+//   // - Update inventory
+//   // - Trigger fulfillment process
+//   // - Send webhooks to other services
+//   console.log("📧 Post-order processing for order:", orderResult.order_id);
+//   try {
+//     // Example: Log order details for external systems
+//     const orderSummary = {
+//       orderId: orderResult.order_id,
+//       stripeSessionId: session.id,
+//       customerEmail: session.customer_email,
+//       totalAmount: orderResult.total_amount,
+//       currency: session.currency,
+//       paymentStatus: session.payment_status,
+//       createdAt: new Date().toISOString()
+//     };
+//     console.log("📋 Order Summary:", JSON.stringify(orderSummary, null, 2));
+//   // Here you could call external APIs, send emails, etc.
+//   // Example:
+//   // await sendOrderConfirmationEmail(orderSummary);
+//   // await updateInventorySystem(orderResult.created_products);
+//   } catch (error) {
+//     console.error("⚠️  Post-processing error (non-critical):", error);
+//   // Don't throw here - order was already created successfully
+//   }
+// }
 async function handleCheckoutCompleted(session) {
   console.log("🛒 Processing checkout completion:", session.id);
   const { metadata, amount_total } = session;
@@ -75,7 +156,7 @@ async function handleCheckoutCompleted(session) {
   if (!metadata?.userId || !metadata?.items) {
     console.error("❌ Missing required metadata:", {
       hasUserId: !!metadata?.userId,
-      hasItems: !!metadata?.items,
+      hasItems: !!metadata?.items
     });
     console.log("Metadata:", metadata);
     throw new Error("Missing required metadata: userId or items");
@@ -89,8 +170,7 @@ async function handleCheckoutCompleted(session) {
     throw new Error("Invalid items JSON in metadata");
   }
   // Extract customer information from completed session
-  const customerEmail =
-    session.customer_email || session.customer_details?.email || null;
+  const customerEmail = session.customer_email || session.customer_details?.email || null;
   const customerPhone = session.customer_details?.phone || null;
   // Extract billing address from customer_details
   let billingAddress = null;
@@ -103,7 +183,7 @@ async function handleCheckoutCompleted(session) {
       city: address.city || null,
       state: address.state || null,
       postal_code: address.postal_code || null,
-      country: address.country || null,
+      country: address.country || null
     };
   }
   // Extract shipping address from shipping_details
@@ -118,7 +198,7 @@ async function handleCheckoutCompleted(session) {
       state: address.state || null,
       postal_code: address.postal_code || null,
       country: address.country || null,
-      phone: session.shipping_details.phone || null,
+      phone: session.shipping_details.phone || null
     };
   }
   // Log what we extracted for debugging
@@ -130,7 +210,7 @@ async function handleCheckoutCompleted(session) {
     hasCustomerDetails: !!session.customer_details,
     hasShippingDetails: !!session.shipping_details,
     sessionStatus: session.status,
-    paymentStatus: session.payment_status,
+    paymentStatus: session.payment_status
   });
   // Validate items structure
   if (!Array.isArray(items) || items.length === 0) {
@@ -138,7 +218,7 @@ async function handleCheckoutCompleted(session) {
     throw new Error("Items must be a non-empty array");
   }
   // Validate each item has required fields
-  for (const item of items) {
+  for (const item of items){
     if (!item.id || !item.quantity || item.quantity <= 0) {
       console.error("❌ Invalid item structure:", item);
       throw new Error(`Invalid item structure: ${JSON.stringify(item)}`);
@@ -152,31 +232,26 @@ async function handleCheckoutCompleted(session) {
     customerEmail,
     customerPhone,
     hasBillingAddress: !!billingAddress,
-    hasShippingAddress: !!shippingAddress,
+    hasShippingAddress: !!shippingAddress
   });
   // Call the RPC function to create the order
-  const { data: result, error } = await supabase.rpc(
-    "create_order_from_stripe",
-    {
-      p_user_id: userId,
-      p_stripe_session_id: session.id,
-      p_total_amount: amount_total,
-      p_items: items,
-      p_customer_email: customerEmail,
-      p_customer_phone: customerPhone,
-      p_billing_address: billingAddress,
-      p_shipping_address: shippingAddress,
-    }
-  );
+  const { data: result, error } = await supabase.rpc("create_order_from_stripe", {
+    p_user_id: userId,
+    p_stripe_session_id: session.id,
+    p_total_amount: amount_total,
+    p_items: items,
+    p_customer_email: customerEmail,
+    p_customer_phone: customerPhone,
+    p_billing_address: billingAddress,
+    p_shipping_address: shippingAddress
+  });
   if (error) {
     console.error("❌ RPC call failed:", error);
     throw new Error(`RPC call failed: ${error.message}`);
   }
   if (!result?.success) {
     console.error("❌ Order creation failed:", result);
-    throw new Error(
-      `Order creation failed: ${result?.error || "Unknown error"}`
-    );
+    throw new Error(`Order creation failed: ${result?.error || "Unknown error"}`);
   }
   console.log("✅ Order created successfully:", {
     orderId: result.order_id,
@@ -185,19 +260,17 @@ async function handleCheckoutCompleted(session) {
     customerEmail: result.customer_email,
     customerPhone: result.customer_phone,
     hasBillingAddress: !!result.billing_address,
-    hasShippingAddress: !!result.shipping_address,
+    hasShippingAddress: !!result.shipping_address
   });
   // Optional: Send confirmation email or other post-processing
   await postOrderProcessing(result, session);
 }
+
 async function postOrderProcessing(orderResult, session) {
   console.log("📧 Post-order processing for order:", orderResult.order_id);
   try {
     // Get detailed order information including products
-    const { data: orderData, error: orderError } = await supabase
-      .from("orders")
-      .select(
-        `
+    const { data: orderData, error: orderError } = await supabase.from("orders").select(`
         id,
         total_amount,
         customer_email,
@@ -214,10 +287,7 @@ async function postOrderProcessing(orderResult, session) {
             images
           )
         )
-      `
-      )
-      .eq("id", orderResult.order_id)
-      .single();
+      `).eq("id", orderResult.order_id).single();
     if (orderError) {
       console.error("❌ Error fetching order details:", orderError);
       return;
@@ -228,11 +298,7 @@ async function postOrderProcessing(orderResult, session) {
     }
     // Create email content
     const emailSubject = `Order Confirmation - #${orderData.tracking_id}`;
-    const emailHtml = generateOrderConfirmationEmail(
-      orderData,
-      session,
-      orderData.tracking_id
-    );
+    const emailHtml = generateOrderConfirmationEmail(orderData, session, orderData.tracking_id);
     // Send email directly using Resend API
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     if (!resendApiKey) {
@@ -243,14 +309,16 @@ async function postOrderProcessing(orderResult, session) {
       method: "POST",
       headers: {
         Authorization: `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         from: "onboarding@resend.dev",
-        to: [orderData.customer_email],
+        to: [
+          orderData.customer_email
+        ],
         subject: emailSubject,
-        html: emailHtml,
-      }),
+        html: emailHtml
+      })
     });
     const emailResult = await emailResponse.json();
     if (emailResponse.ok) {
@@ -258,7 +326,7 @@ async function postOrderProcessing(orderResult, session) {
         emailId: emailResult.id,
         to: orderData.customer_email,
         orderId: orderResult.order_id,
-        trackingId: orderData.tracking_id,
+        trackingId: orderData.tracking_id
       });
     } else {
       console.error("❌ Failed to send order confirmation email:", emailResult);
@@ -274,16 +342,17 @@ async function postOrderProcessing(orderResult, session) {
       currency: session.currency,
       paymentStatus: session.payment_status,
       itemsCount: orderData.order_products.length,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
     };
     console.log("📋 Order Summary:", JSON.stringify(orderSummary, null, 2));
   } catch (error) {
     console.error("❌ Error in post-order processing:", error);
   }
 }
+
 function generateOrderConfirmationEmail(orderData, session, trackingId) {
   // Dynamic currency formatting function
-  const formatCurrency = (amount, currency = "usd") => {
+  const formatCurrency = (amount, currency = "usd")=>{
     const currencyCode = currency.toUpperCase();
     const amountInMajorUnit = amount / 100;
     // Currency symbol mapping
@@ -311,7 +380,7 @@ function generateOrderConfirmationEmail(orderData, session, trackingId) {
       HUF: "Ft",
       RUB: "₽",
       BRL: "R$",
-      MXN: "MX$",
+      MXN: "MX$"
     };
     const symbol = currencySymbols[currencyCode] || currencyCode + " ";
     // For currencies that don't use decimal places (like JPY, KRW)
@@ -331,40 +400,29 @@ function generateOrderConfirmationEmail(orderData, session, trackingId) {
       "VUV",
       "XAF",
       "XOF",
-      "XPF",
+      "XPF"
     ];
     if (noDecimalCurrencies.includes(currencyCode)) {
       return `${symbol}${Math.round(amountInMajorUnit).toLocaleString()}`;
     }
     return `${symbol}${amountInMajorUnit.toFixed(2)}`;
   };
-  const formatDate = (dateString) =>
-    new Date(dateString).toLocaleDateString("en-US", {
+  const formatDate = (dateString)=>new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
-      day: "numeric",
+      day: "numeric"
     });
   // Get currency from session, fallback to 'usd'
   const currency = session.currency || "usd";
   // Calculate order summary
-  const itemsHtml = orderData.order_products
-    .map(
-      (item) => `
+  const itemsHtml = orderData.order_products.map((item)=>`
     <tr style="border-bottom: 1px solid #e5e7eb;">
       <td style="padding: 12px 0;">
         <div style="display: flex; align-items: center;">
-          ${
-            item.product.images && item.product.images.length > 0
-              ? `<img src="${item.product.images[0]}" alt="${item.product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 12px;">`
-              : ""
-          }
+          ${item.product.images && item.product.images.length > 0 ? `<img src="${item.product.images[0]}" alt="${item.product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 12px;">` : ""}
           <div>
-            <div style="font-weight: 600; color: #1f2937;">${
-              item.product.name
-            }</div>
-            <div style="color: #6b7280; font-size: 14px;">Quantity: ${
-              item.quantity
-            }</div>
+            <div style="font-weight: 600; color: #1f2937;">${item.product.name}</div>
+            <div style="color: #6b7280; font-size: 14px;">Quantity: ${item.quantity}</div>
           </div>
         </div>
       </td>
@@ -372,51 +430,23 @@ function generateOrderConfirmationEmail(orderData, session, trackingId) {
         ${formatCurrency(item.price_at_time * item.quantity, currency)}
       </td>
     </tr>
-  `
-    )
-    .join("");
-  const shippingAddressHtml = orderData.shipping_address
-    ? `
+  `).join("");
+  const shippingAddressHtml = orderData.shipping_address ? `
     <div style="margin-bottom: 24px;">
       <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #1f2937;">Shipping Address</h3>
       <div style="color: #4b5563; line-height: 1.5;">
-        ${
-          orderData.shipping_address.name
-            ? `<div style="font-weight: 600;">${orderData.shipping_address.name}</div>`
-            : ""
-        }
-        ${
-          orderData.shipping_address.line1
-            ? `<div>${orderData.shipping_address.line1}</div>`
-            : ""
-        }
-        ${
-          orderData.shipping_address.line2
-            ? `<div>${orderData.shipping_address.line2}</div>`
-            : ""
-        }
+        ${orderData.shipping_address.name ? `<div style="font-weight: 600;">${orderData.shipping_address.name}</div>` : ""}
+        ${orderData.shipping_address.line1 ? `<div>${orderData.shipping_address.line1}</div>` : ""}
+        ${orderData.shipping_address.line2 ? `<div>${orderData.shipping_address.line2}</div>` : ""}
         <div>
-          ${
-            orderData.shipping_address.city
-              ? `${orderData.shipping_address.city}, `
-              : ""
-          }
-          ${
-            orderData.shipping_address.state
-              ? `${orderData.shipping_address.state} `
-              : ""
-          }
+          ${orderData.shipping_address.city ? `${orderData.shipping_address.city}, ` : ""}
+          ${orderData.shipping_address.state ? `${orderData.shipping_address.state} ` : ""}
           ${orderData.shipping_address.postal_code || ""}
         </div>
-        ${
-          orderData.shipping_address.country
-            ? `<div>${orderData.shipping_address.country}</div>`
-            : ""
-        }
+        ${orderData.shipping_address.country ? `<div>${orderData.shipping_address.country}</div>` : ""}
       </div>
     </div>
-  `
-    : "";
+  ` : "";
   return `
     <!DOCTYPE html>
     <html>
@@ -450,15 +480,10 @@ function generateOrderConfirmationEmail(orderData, session, trackingId) {
             <div style="margin-bottom: 16px;">
               <div>
                 <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #1f2937;">Order #${trackingId}</h3>
-                <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;">Placed on ${formatDate(
-                  orderData.created_at
-                )}</p>
+                <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;">Placed on ${formatDate(orderData.created_at)}</p>
               </div>
               <div style="margin-top: 16px;">
-                <div style="font-size: 24px; font-weight: 700; color: #1f2937;">${formatCurrency(
-                  orderData.total_amount,
-                  currency
-                )}</div>
+                <div style="font-size: 24px; font-weight: 700; color: #1f2937;">${formatCurrency(orderData.total_amount, currency)}</div>
                 <div style="color: #059669; font-size: 14px; font-weight: 600;">Paid</div>
               </div>
             </div>
