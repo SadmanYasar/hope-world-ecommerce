@@ -116,7 +116,10 @@ export const authProviderClient: AuthProvider = {
   },
   forgotPassword: async ({ email }) => {
     const result = await supabaseBrowserClient.auth.resetPasswordForEmail(
-      email
+      email,
+      {
+        redirectTo: `${window.location.origin}/reset-password`,
+      }
     );
     console.log(result);
 
