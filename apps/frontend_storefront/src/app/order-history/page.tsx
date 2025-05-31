@@ -25,6 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@components/ui/multiple-selector";
 import { Search } from "./search";
 import { ReviewForm } from "./ReviewForm";
+import Image from "next/image";
 
 interface OrderProduct {
   id: number;
@@ -33,6 +34,7 @@ interface OrderProduct {
   product: {
     id: number;
     name: string;
+    images?: string;
   };
 }
 
@@ -130,7 +132,7 @@ export default function OrderHistory() {
     ],
     meta: {
       select:
-        "id, created_at, total_amount, status, customer_email, customer_phone, billing_address, shipping_address, tracking_id, order_products (id, quantity, price_at_time, product: product_id (id, name))",
+        "id, created_at, total_amount, status, customer_email, customer_phone, billing_address, shipping_address, tracking_id, order_products (id, quantity, price_at_time, product: product_id (id, name, images))",
     },
   });
 
@@ -158,6 +160,13 @@ export default function OrderHistory() {
       order.tracking_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.id.toString().includes(searchTerm.toLowerCase())
   );
+
+  // Set the first order as selected when orders are loaded
+  useEffect(() => {
+    if (filteredOrders.length > 0 && !selectedOrderId) {
+      setSelectedOrderId(filteredOrders[0].id);
+    }
+  }, [filteredOrders, selectedOrderId]);
 
   // Derive the selected order from the current orders data and selectedOrderId
   const selectedOrder = selectedOrderId
@@ -222,7 +231,11 @@ export default function OrderHistory() {
   };
 
   // Open review modal for a product
-  const handleReviewClick = (productId: number, productName: string, orderId: string) => {
+  const handleReviewClick = (
+    productId: number,
+    productName: string,
+    orderId: string
+  ) => {
     setProductToReview({
       id: productId,
       name: productName,
@@ -469,45 +482,67 @@ export default function OrderHistory() {
                     </h3>
                     <div className="space-y-3">
                       {selectedOrder.order_products.map((item) => {
-                        const isOrderDelivered = getCurrentStatus(selectedOrder.status) === "Delivered";
+                        const isOrderDelivered =
+                          getCurrentStatus(selectedOrder.status) ===
+                          "Delivered";
                         const hasReviewed = hasBeenReviewed(item.product.id);
-                        
+
                         return (
                           <div
                             key={item.id}
                             className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                           >
-                            <div>
-                              <p className="font-medium">{item.product.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                Qty: {item.quantity}
-                              </p>
+                            <div className="flex flex-row gap-2">
+                              <Image
+                                src={
+                                  item.product.images
+                                    ? JSON.parse(item.product.images)?.[0]?.url
+                                    : "/logo.png"
+                                }
+                                alt=""
+                                width={40}
+                                height={40}
+                              />
+                              <div>
+                                <p className="font-medium">
+                                  {item.product.name}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  Qty: {item.quantity}
+                                </p>
+                              </div>
                             </div>
                             <div className="flex items-center gap-2">
                               <p className="font-medium">
-                                {formatCurrency(item.price_at_time * item.quantity)}
+                                {formatCurrency(
+                                  item.price_at_time * item.quantity
+                                )}
                               </p>
-                              
-                              {isOrderDelivered && (
-                                hasReviewed ? (
-                                  <Badge variant="outline" className="flex items-center gap-1">
-                                    <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+
+                              {isOrderDelivered &&
+                                (hasReviewed ? (
+                                  <Badge
+                                    variant="outline"
+                                    className="flex items-center gap-1"
+                                  >
+                                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                                     Reviewed
                                   </Badge>
                                 ) : (
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => handleReviewClick(
-                                      item.product.id,
-                                      item.product.name,
-                                      selectedOrder.id
-                                    )}
+                                    onClick={() =>
+                                      handleReviewClick(
+                                        item.product.id,
+                                        item.product.name,
+                                        selectedOrder.id
+                                      )
+                                    }
                                   >
                                     Add Review
                                   </Button>
-                                )
-                              )}
+                                ))}
                             </div>
                           </div>
                         );
