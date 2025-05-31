@@ -47,8 +47,14 @@ export default function OrderList() {
           dataIndex="status"
           title={"Current Status"}
           render={(value: any[]) => {
-            if (!value || value.length === 0) return "-";
-            const latestStatus = value[value.length - 1];
+            // Sort by date, with entries without dates coming last
+            const sortedStatuses = [...value].sort((a, b) => {
+              if (!a.date) return 1;
+              if (!b.date) return -1;
+              return new Date(b.date).getTime() - new Date(a.date).getTime();
+            });
+
+            const latestStatus = sortedStatuses[0];
             return <Tag color="blue">{latestStatus.status}</Tag>;
           }}
         />

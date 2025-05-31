@@ -17,12 +17,14 @@ import {
   MapPin,
   Mail,
   Phone,
+  Star,
 } from "lucide-react";
 import { CrudFilter, useList } from "@refinedev/core";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDebounce } from "@components/ui/multiple-selector";
 import { Search } from "./search";
+import { ReviewForm } from "./ReviewForm";
 
 interface OrderProduct {
   id: number;
@@ -50,6 +52,14 @@ interface Order {
   billing_address?: any;
   shipping_address?: any;
   order_products: OrderProduct[];
+}
+
+interface Review {
+  id: string;
+  product_id: number;
+  order_id: string;
+  rating: number;
+  comment?: string;
 }
 
 const getStatusIcon = (status: string) => {
@@ -85,6 +95,12 @@ const getStatusColor = (status: string) => {
 export default function OrderHistory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [productToReview, setProductToReview] = useState<{
+    id: number;
+    name: string;
+    orderId: string;
+  } | null>(null);
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -118,7 +134,23 @@ export default function OrderHistory() {
     },
   });
 
+  // Fetch reviews for the selected order
+  const { data: reviewsData, refetch: refetchReviews } = useList<Review>({
+    resource: "reviews",
+    filters: [
+      {
+        field: "order_id",
+        operator: "eq",
+        value: selectedOrderId || "",
+      },
+    ],
+    queryOptions: {
+      enabled: !!selectedOrderId,
+    },
+  });
+
   const orders = data?.data || [];
+  const reviews = reviewsData?.data || [];
 
   // Filter orders by tracking ID or order ID
   const filteredOrders = orders.filter(
@@ -147,6 +179,11 @@ export default function OrderHistory() {
     return statusWithDates.length > 0
       ? statusWithDates[0].status
       : statusArray[0]?.status || "Ordered";
+  };
+
+  // Check if a product has been reviewed
+  const hasBeenReviewed = (productId: number) => {
+    return reviews.some((review) => review.product_id === productId);
   };
 
   // Sort statuses for timeline display
@@ -182,6 +219,25 @@ export default function OrderHistory() {
   // Handle order click
   const handleOrderClick = (order: Order) => {
     setSelectedOrderId(order.id);
+  };
+
+  // Open review modal for a product
+  const handleReviewClick = (productId: number, productName: string, orderId: string) => {
+    setProductToReview({
+      id: productId,
+      name: productName,
+      orderId,
+    });
+    setReviewModalOpen(true);
+  };
+
+  // Close review modal and refresh reviews
+  const handleReviewClose = () => {
+    setReviewModalOpen(false);
+    setProductToReview(null);
+    if (selectedOrderId) {
+      refetchReviews();
+    }
   };
 
   return (
@@ -412,22 +468,50 @@ export default function OrderHistory() {
                       Items ({selectedOrder.order_products.length})
                     </h3>
                     <div className="space-y-3">
-                      {selectedOrder.order_products.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                        >
-                          <div>
-                            <p className="font-medium">{item.product.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              Qty: {item.quantity}
-                            </p>
+                      {selectedOrder.order_products.map((item) => {
+                        const isOrderDelivered = getCurrentStatus(selectedOrder.status) === "Delivered";
+                        const hasReviewed = hasBeenReviewed(item.product.id);
+                        
+                        return (
+                          <div
+                            key={item.id}
+                            className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                          >
+                            <div>
+                              <p className="font-medium">{item.product.name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                Qty: {item.quantity}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium">
+                                {formatCurrency(item.price_at_time * item.quantity)}
+                              </p>
+                              
+                              {isOrderDelivered && (
+                                hasReviewed ? (
+                                  <Badge variant="outline" className="flex items-center gap-1">
+                                    <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                                    Reviewed
+                                  </Badge>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleReviewClick(
+                                      item.product.id,
+                                      item.product.name,
+                                      selectedOrder.id
+                                    )}
+                                  >
+                                    Add Review
+                                  </Button>
+                                )
+                              )}
+                            </div>
                           </div>
-                          <p className="font-medium">
-                            {formatCurrency(item.price_at_time * item.quantity)}
-                          </p>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -510,6 +594,17 @@ export default function OrderHistory() {
           </Card>
         </div>
       </main>
+
+      {/* Review Modal */}
+      {productToReview && (
+        <ReviewForm
+          isOpen={reviewModalOpen}
+          onClose={handleReviewClose}
+          productId={productToReview.id}
+          orderId={productToReview.orderId}
+          productName={productToReview.name}
+        />
+      )}
     </div>
   );
 }

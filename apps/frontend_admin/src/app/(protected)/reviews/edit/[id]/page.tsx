@@ -1,113 +1,52 @@
 "use client";
 
-import { Edit, useForm, useSelect } from "@refinedev/antd";
-import { supabaseBrowserClient } from "supabase-package/client";
-import { normalizeFile } from "@utils/supabase/normalize";
-import { Form, Input, InputNumber, Upload } from "antd";
-import { RcFile } from "antd/lib/upload/interface";
+import { Edit, useForm } from "@refinedev/antd";
+import { Form, Input, Rate } from "antd";
 
-export default function ProductEdit() {
-  const { formProps, saveButtonProps } = useForm();
+export default function ReviewEdit() {
+  const { formProps, saveButtonProps, queryResult } = useForm({
+    meta: {
+      select: "*, product:product_id(*), order:order_id(*)",
+    },
+  });
+  
+  const reviewData = queryResult?.data?.data;
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
         <Form.Item
-          label={"Name"}
-          name={["name"]}
+          label="Product"
+          name={["product", "name"]}
+        >
+          <Input disabled />
+        </Form.Item>
+
+        <Form.Item
+          label="Order"
+          name={["order", "tracking_id"]}
+        >
+          <Input disabled />
+        </Form.Item>
+
+        <Form.Item
+          label="Rating"
+          name="rating"
           rules={[
             {
               required: true,
+              message: "Please rate the product",
             },
           ]}
         >
-          <Input />
+          <Rate />
         </Form.Item>
+
         <Form.Item
-          label={"Description"}
-          name="description"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          label="Comment"
+          name="comment"
         >
           <Input.TextArea rows={5} />
-        </Form.Item>
-        <Form.Item label="Images">
-          <Form.Item
-            name="images"
-            valuePropName="fileList"
-            getValueFromEvent={(event) => {
-              const normalized = normalizeFile(event);
-              return normalized.length > 0 ? [normalized[0]] : [];
-            }}
-            getValueProps={(value) => {
-              if (typeof value === "string") {
-                try {
-                  const parsedValue = JSON.parse(value);
-                  return { fileList: parsedValue };
-                } catch {
-                  return { fileList: [] };
-                }
-              }
-              return { fileList: value || [] };
-            }}
-            noStyle
-          >
-            <Upload.Dragger
-              name="file"
-              listType="picture"
-              accept="image/png, image/jpeg"
-              maxCount={2}
-              customRequest={async ({ file, onError, onSuccess }) => {
-                try {
-                  const rcFile = file as RcFile;
-                  await supabaseBrowserClient.storage
-                    .from("Product")
-                    .upload(`public/${rcFile.name}`, file, {
-                      cacheControl: "3600",
-                      upsert: true,
-                    });
-
-                  const { data } = await supabaseBrowserClient.storage
-                    .from("Product")
-                    .getPublicUrl(`public/${rcFile.name}`);
-
-                  const xhr = new XMLHttpRequest();
-                  onSuccess?.({ url: data?.publicUrl }, xhr);
-                } catch (error) {
-                  onError?.(new Error("Upload Error"));
-                }
-              }}
-            >
-              <p className="ant-upload-text">
-                Drag and drop an image (png/jpg)
-              </p>
-            </Upload.Dragger>
-          </Form.Item>
-        </Form.Item>
-        <Form.Item
-          label={"Price"}
-          name={["price"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <InputNumber />
-        </Form.Item>
-        <Form.Item
-          label={"Stock"}
-          name={["stock"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <InputNumber />
         </Form.Item>
       </Form>
     </Edit>
