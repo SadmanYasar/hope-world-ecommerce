@@ -62,7 +62,7 @@ export default function ProductsPage() {
     // syncWithLocation: true,
     meta: {
       select:
-        "id, name, description, price, images, category(id,text), created_at, visible",
+        "id, name, description, price, images, category(id,text), created_at, visible, rating",
     },
     sorters: {
       initial: [
@@ -157,6 +157,13 @@ export default function ProductsPage() {
                 render={(value) => `$${value?.toFixed(2) || 0}`}
                 sorter
                 defaultSortOrder={getDefaultSortOrder("price")}
+              />
+              <Table.Column
+                dataIndex="rating"
+                title="Rating"
+                render={(value) => `${value || 0}`}
+                sorter
+                defaultSortOrder={getDefaultSortOrder("rating")}
               />
               <Table.Column
                 dataIndex="category"

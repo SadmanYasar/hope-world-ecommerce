@@ -101,6 +101,16 @@ const Navbar = () => {
     }
   }, [userData?.avatar_url]);
 
+  // Handle clearing filters
+  const handleClearFilters = () => {
+    setCategory("all");
+    setPriceRange("all");
+    setRating("any");
+    setSearch("");
+    setSortByDate("desc");
+    setSortByPrice("desc");
+  };
+
   console.log("Navbar userData", userData);
   // const handleSearch = (e: React.FormEvent) => {
   //   e.preventDefault();
@@ -287,7 +297,7 @@ const Navbar = () => {
                 </div>
               </div>
 
-              <div className="flex items-center mt-2 md:mt-0">
+              <div className="flex items-center gap-2 mt-2 md:mt-0">
                 <span className="mr-2 text-sm font-medium">Sort By:</span>
                 <Select value={sortByDate} onValueChange={setSortByDate}>
                   <SelectTrigger className="w-[160px] h-8 text-sm">
@@ -300,6 +310,14 @@ const Navbar = () => {
                     <SelectItem value="rating">Customer Rating</SelectItem> */}
                   </SelectContent>
                 </Select>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleClearFilters}
+                  className="ml-2"
+                >
+                  Clear Filters
+                </Button>
               </div>
             </div>
           </div>

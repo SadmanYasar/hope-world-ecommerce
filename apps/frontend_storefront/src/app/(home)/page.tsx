@@ -47,9 +47,95 @@ const Loading = () => {
 };
 
 export default function ProductsPage() {
-  const { category, sortByDate, search, sortByPrice } = useFilterStore();
+  const { category, sortByDate, search, sortByPrice, priceRange, rating } = useFilterStore();
 
   const debouncedSearch = useDebounce(search, 300);
+
+  // Convert price range selection to filter values
+  const getPriceFilters = (): CrudFilter[] => {
+    if (!priceRange || priceRange === "all") return [];
+    
+    switch (priceRange) {
+      case "under25":
+        return [
+          {
+            field: "price",
+            operator: "lte",
+            value: 25,
+          },
+        ];
+      case "25-50":
+        return [
+          {
+            field: "price",
+            operator: "gte",
+            value: 25,
+          },
+          {
+            field: "price",
+            operator: "lte",
+            value: 50,
+          },
+        ];
+      case "50-100":
+        return [
+          {
+            field: "price",
+            operator: "gte",
+            value: 50,
+          },
+          {
+            field: "price",
+            operator: "lte",
+            value: 100,
+          },
+        ];
+      case "over100":
+        return [
+          {
+            field: "price",
+            operator: "gte",
+            value: 100,
+          },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  // Convert rating selection to filter value
+  const getRatingFilter = (): CrudFilter[] => {
+    if (!rating || rating === "any") return [];
+    
+    let minRating = 0;
+    switch (rating) {
+      case "4plus":
+        minRating = 4;
+        break;
+      case "3plus":
+        minRating = 3;
+        break;
+      case "2plus":
+        minRating = 2;
+        break;
+      case "1plus":
+        minRating = 1;
+        break;
+      default:
+        return [];
+    }
+    
+    return [
+      {
+        field: "rating",
+        operator: "gte",
+        value: minRating,
+      },
+    ];
+  };
+
+  const priceFilters = getPriceFilters();
+  const ratingFilters = getRatingFilter();
 
   const { data, isLoading, error, fetchNextPage, hasNextPage } =
     useInfiniteList({
@@ -75,6 +161,8 @@ export default function ProductsPage() {
               },
             ] as CrudFilter[])
           : []),
+        ...priceFilters,
+        ...ratingFilters,
       ],
       sorters: [
         {
@@ -87,7 +175,7 @@ export default function ProductsPage() {
         },
       ],
       meta: {
-        select: "id, name, price, images, category(id,text)",
+        select: "id, name, price, images, category(id,text), rating",
       },
       pagination: {
         pageSize: 20,

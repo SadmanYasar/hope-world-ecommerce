@@ -181,4 +181,32 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Add this to your existing styles */
+
+  .product-review {
+    transition: all 0.2s ease;
+  }
+
+  .product-review:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .reviews-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+
+  .reviews-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .reviews-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .reviews-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+  }
 }

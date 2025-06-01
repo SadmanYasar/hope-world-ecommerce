@@ -20,7 +20,7 @@ export function Rating({ rating, max = 5, className }: RatingProps) {
       {Array.from({ length: fullStars }).map((_, i) => (
         <Star
           key={`full-${i}`}
-          className="w-4 h-4 fill-primary text-primary"
+          className="w-4 h-4 fill-yellow-400 text-primary"
           aria-hidden="true"
         />
       ))}

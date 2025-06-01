@@ -23,40 +23,40 @@ export default function ReviewsList() {
     <List>
       <Table {...tableProps} rowKey="id">
         <Table.Column dataIndex="id" title={"ID"} />
-        <Table.Column 
-          dataIndex={["product", "name"]} 
-          title={"Product"} 
+        <Table.Column
+          dataIndex={["product", "name"]}
+          title={"Product"}
           render={(value, record: any) => (
             <span>{value || `Product #${record.product_id}`}</span>
           )}
         />
-        <Table.Column 
-          dataIndex="rating" 
-          title={"Rating"} 
-          render={(value: number) => (
-            <Rate disabled defaultValue={value} />
-          )}
+        <Table.Column
+          dataIndex="rating"
+          title={"Rating"}
+          render={(value: number) => <Rate disabled defaultValue={value} />}
         />
-        <Table.Column 
-          dataIndex="comment" 
+        <Table.Column
+          dataIndex="comment"
           title={"Comment"}
-          render={(value: string) => (
-            value ? (value.length > 50 ? `${value.substring(0, 50)}...` : value) : "-"
-          )}
+          render={(value: string) =>
+            value
+              ? value.length > 50
+                ? `${value.substring(0, 50)}...`
+                : value
+              : "-"
+          }
         />
-        <Table.Column 
+        {/* <Table.Column 
           dataIndex={["order", "tracking_id"]} 
           title={"Order"} 
           render={(value, record: any) => (
             <span>{value || `Order #${record.order_id}`}</span>
           )}
-        />
+        /> */}
         <Table.Column
           dataIndex="created_at"
           title={"Date"}
-          render={(value) => (
-            <DateField format="MM/DD/YYYY" value={value} />
-          )}
+          render={(value) => <DateField format="MM/DD/YYYY" value={value} />}
         />
         <Table.Column
           title={"Actions"}
