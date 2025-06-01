@@ -1,6 +1,11 @@
 "use client";
 
-import { useInfiniteList, BaseRecord, CrudFilter } from "@refinedev/core";
+import {
+  useInfiniteList,
+  BaseRecord,
+  CrudFilter,
+  BaseKey,
+} from "@refinedev/core";
 // import Loading from "@components/ui/loading";
 // import Breadcrumb from "@components/Breadcrumb";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -47,14 +52,15 @@ const Loading = () => {
 };
 
 export default function ProductsPage() {
-  const { category, sortByDate, search, sortByPrice, priceRange, rating } = useFilterStore();
+  const { category, sortByDate, search, sortByPrice, priceRange, rating } =
+    useFilterStore();
 
   const debouncedSearch = useDebounce(search, 300);
 
   // Convert price range selection to filter values
   const getPriceFilters = (): CrudFilter[] => {
     if (!priceRange || priceRange === "all") return [];
-    
+
     switch (priceRange) {
       case "under25":
         return [
@@ -106,7 +112,7 @@ export default function ProductsPage() {
   // Convert rating selection to filter value
   const getRatingFilter = (): CrudFilter[] => {
     if (!rating || rating === "any") return [];
-    
+
     let minRating = 0;
     switch (rating) {
       case "4plus":
@@ -124,7 +130,7 @@ export default function ProductsPage() {
       default:
         return [];
     }
-    
+
     return [
       {
         field: "rating",
@@ -274,6 +280,7 @@ export default function ProductsPage() {
                                 <span>Category: {product.category.text}</span>
                               )}
                             </p>
+                            <Reviews productId={product.id} />
                           </div>
                         </div>
                       </div>
@@ -285,5 +292,67 @@ export default function ProductsPage() {
         </ResponsiveMasonry>
       </InfiniteScroll>
     </>
+  );
+}
+
+function Reviews({ productId }: { productId?: BaseKey }) {
+  const {
+    data,
+    isLoading,
+    error,
+    hasNextPage,
+    fetchNextPage,
+    hasPreviousPage,
+  } = useInfiniteList({
+    resource: "reviews",
+    filters: [
+      {
+        field: "product_id",
+        operator: "eq",
+        value: productId,
+      },
+    ],
+    pagination: {
+      pageSize: 5,
+    },
+    queryOptions: {
+      enabled: !!productId,
+    },
+    meta: {
+      select: "id, product_id, rating, comment, created_at",
+    },
+  });
+
+  return (
+    <div className="mt-4">
+      <h4 className="mb-2 font-medium">Reviews:</h4>
+      {isLoading && <div>Loading reviews...</div>}
+      {error && <div>Error loading reviews: {error.message}</div>}
+      {data?.pages?.length === 0 && <div>No reviews found</div>}
+
+      {data?.pages?.map((page) =>
+        page.data.map((review: BaseRecord) => (
+          <div key={review.id} className="p-4 mb-2 border rounded">
+            <p className="text-sm">
+              {Array(review.rating).fill("⭐").join("")} -{" "}
+              {review.comment || "No comment"}
+            </p>
+            <p className="text-xs text-gray-500">
+              {new Date(review.created_at).toLocaleDateString()}
+            </p>
+          </div>
+        ))
+      )}
+
+      {(hasNextPage || hasPreviousPage) && (
+        <button
+          onClick={() => fetchNextPage()}
+          disabled={!hasNextPage}
+          className="mt-2 text-blue-600 hover:underline"
+        >
+          Load more reviews
+        </button>
+      )}
+    </div>
   );
 }

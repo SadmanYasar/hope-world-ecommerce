@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { searchSchema, SearchSchema } from "./searchSchema";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import { Button } from "@components/ui/button";
 
 export function Search({ onSearch }: { onSearch: (query: string) => void }) {
   const [error, setError] = useState<string | null>(null);
+  const previousQueryRef = useRef<string>("");
 
   const {
     register,
@@ -32,6 +33,17 @@ export function Search({ onSearch }: { onSearch: (query: string) => void }) {
     }
   }, [isValid, error]);
 
+  // Detect when the input is manually cleared and trigger search
+  useEffect(() => {
+    // If query was non-empty before and is now empty, trigger search
+    if (previousQueryRef.current && query === "") {
+      onSearch("");
+    }
+
+    // Update the previous query value
+    previousQueryRef.current = query;
+  }, [query, onSearch]);
+
   // Reset form state after successful submission to enable subsequent submissions
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -41,6 +53,7 @@ export function Search({ onSearch }: { onSearch: (query: string) => void }) {
   }, [isSubmitSuccessful, reset, query]);
 
   const onSubmit = (data: SearchSchema) => {
+    // Allow empty search by passing the empty string to onSearch
     console.log("Searching for UUID:", data.query);
     onSearch(data.query);
   };
@@ -51,17 +64,28 @@ export function Search({ onSearch }: { onSearch: (query: string) => void }) {
     }
   };
 
+  // Add a clear button to explicitly clear the search
+  const handleClear = () => {
+    reset({ query: "" });
+    onSearch("");
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit, handleFormError)}>
       <div className="flex items-center space-x-2">
         <Input
           type="text"
-          placeholder="Enter UUID to search..."
+          placeholder="Enter UUID to search"
           {...register("query")}
         />
         <Button variant={"outline"} type="submit">
           Search
         </Button>
+        {query && (
+          <Button variant={"ghost"} type="button" onClick={handleClear}>
+            Clear
+          </Button>
+        )}
       </div>
       {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </form>
