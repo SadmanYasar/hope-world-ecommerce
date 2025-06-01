@@ -106,6 +106,7 @@ export default function ProductCreate() {
         <Form.Item
           label={"Visible"}
           name={["visible"]}
+          valuePropName="checked"
           rules={[
             {
               required: true,

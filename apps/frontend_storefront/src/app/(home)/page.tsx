@@ -181,7 +181,8 @@ export default function ProductsPage() {
         },
       ],
       meta: {
-        select: "id, name, price, images, category(id,text), rating",
+        select:
+          "id, name, price, images, category(id,text), rating, description",
       },
       pagination: {
         pageSize: 20,
@@ -264,6 +265,12 @@ export default function ProductsPage() {
                           <h3 className="text-xl font-semibold">
                             {product.name}
                           </h3>
+                          {/* show description */}
+                          {product.description && (
+                            <p className="text-sm text-gray-700">
+                              {product.description}
+                            </p>
+                          )}
                           <p className="text-lg font-bold">${product.price}</p>
                           <div className="py-2">
                             <AddToCartButton
@@ -325,7 +332,7 @@ function Reviews({ productId }: { productId?: BaseKey }) {
 
   return (
     <div className="mt-4">
-      <h4 className="mb-2 font-medium">Reviews:</h4>
+      {data?.pages?.length && <h4 className="mb-2 font-medium">Reviews:</h4>}
       {isLoading && <div>Loading reviews...</div>}
       {error && <div>Error loading reviews: {error.message}</div>}
       {data?.pages?.length === 0 && <div>No reviews found</div>}

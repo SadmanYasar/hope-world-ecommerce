@@ -62,7 +62,7 @@ export default function ProductsPage() {
     // syncWithLocation: true,
     meta: {
       select:
-        "id, name, description, price, images, category(id,text), created_at, visible, rating",
+        "id, name, price, images, category(id,text), created_at, visible, rating",
     },
     sorters: {
       initial: [
@@ -175,14 +175,14 @@ export default function ProductsPage() {
                 sorter
                 defaultSortOrder={getDefaultSortOrder("category")}
               />
-              <Table.Column
+              {/* <Table.Column
                 dataIndex="description"
                 title="Description"
                 render={(value: any) => {
                   if (!value) return "-";
                   return <MarkdownField value={value.slice(0, 80) + "..."} />;
                 }}
-              />
+              /> */}
               <Table.Column
                 dataIndex="images"
                 title={"Images"}
