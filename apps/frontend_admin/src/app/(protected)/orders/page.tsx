@@ -36,7 +36,7 @@ export default function OrderList() {
           title={"Total Amount"}
           render={(value: number) => (
             <NumberField
-              value={value}
+              value={value / 100}
               options={{ style: "currency", currency: "USD" }}
             />
           )}

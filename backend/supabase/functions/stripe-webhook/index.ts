@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.36.0?target
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"), {
   // This is needed to use the Fetch API rather than relying on the Node http
   // package.
-  apiVersion: "2025-05-28.basil",
+  apiVersion: "2025-05-28.basil"
 });
 // This is needed in order to use the Web Crypto API in Deno.
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
@@ -265,7 +265,6 @@ async function handleCheckoutCompleted(session) {
   // Optional: Send confirmation email or other post-processing
   await postOrderProcessing(result, session);
 }
-
 async function postOrderProcessing(orderResult, session) {
   console.log("📧 Post-order processing for order:", orderResult.order_id);
   try {
@@ -349,7 +348,6 @@ async function postOrderProcessing(orderResult, session) {
     console.error("❌ Error in post-order processing:", error);
   }
 }
-
 function generateOrderConfirmationEmail(orderData, session, trackingId) {
   // Dynamic currency formatting function
   const formatCurrency = (amount, currency = "usd")=>{
@@ -419,7 +417,7 @@ function generateOrderConfirmationEmail(orderData, session, trackingId) {
     <tr style="border-bottom: 1px solid #e5e7eb;">
       <td style="padding: 12px 0;">
         <div style="display: flex; align-items: center;">
-          ${item.product.images && item.product.images.length > 0 ? `<img src="${item.product.images[0]}" alt="${item.product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 12px;">` : ""}
+          ${item.product.images ? `<img src="${JSON.parse(item.product.images)?.[0].url}" alt="${item.product.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 12px;">` : ""}
           <div>
             <div style="font-weight: 600; color: #1f2937;">${item.product.name}</div>
             <div style="color: #6b7280; font-size: 14px;">Quantity: ${item.quantity}</div>
