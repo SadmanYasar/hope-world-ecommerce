@@ -19,7 +19,7 @@ export default function ProductShow() {
     // MIGHT USE THIS FOR REVIEWS
     meta: {
       select:
-        "id, name, description, price, images, category(id,text), visible",
+        "id, name, description, price, images, category(id,text), visible, summarized_review",
     },
   });
   const { data, isLoading } = query;
@@ -70,6 +70,10 @@ export default function ProductShow() {
       <NumberField value={record?.price} />
       <Title level={5}>{"Visible"}</Title>
       <TextField value={record?.visible ? "True" : "False"} />
+      <Title style={{
+        display: record?.summarized_review ? "block" : "none",
+      }} level={5}>{"Summarized Review"}</Title>
+      <MarkdownField value={record?.summarized_review} />
     </Show>
   );
 }

@@ -182,7 +182,7 @@ export default function ProductsPage() {
       ],
       meta: {
         select:
-          "id, name, price, images, category(id,text), rating, description",
+          "id, name, price, images, category(id,text), rating, description, summarized_review",
       },
       pagination: {
         pageSize: 20,
@@ -287,6 +287,14 @@ export default function ProductsPage() {
                                 <span>Category: {product.category.text}</span>
                               )}
                             </p>
+                            {/* Show summarized review if it exists */}
+                            {product.summarized_review && (
+                              <div className="mt-2">
+                                <p className="text-sm text-gray-600">
+                                  {product.summarized_review}
+                                </p>
+                              </div>
+                            )}
                             <Reviews productId={product.id} />
                           </div>
                         </div>
