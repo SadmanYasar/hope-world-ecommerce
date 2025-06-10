@@ -23,6 +23,7 @@ export default function UserList() {
         <Table.Column dataIndex="username" title="Username" />
         <Table.Column dataIndex="first_name" title="First Name" />
         <Table.Column dataIndex="last_name" title="Last Name" />
+        <Table.Column dataIndex="email" title="Email" />
         <Table.Column
           title="Role"
           render={(record) => {

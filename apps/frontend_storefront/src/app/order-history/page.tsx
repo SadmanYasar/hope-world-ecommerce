@@ -255,35 +255,6 @@ export default function OrderHistory() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="shadow-md bg-card">
-        <div className="container flex items-center justify-between px-4 py-6 mx-auto">
-          <div className="flex items-center space-x-2">
-            <Package2 className="w-6 h-6 text-primary" />
-            <span className="text-2xl font-bold text-primary">Hope World</span>
-          </div>
-          <nav>
-            <Button
-              variant="ghost"
-              onClick={() => (window.location.href = "/")}
-            >
-              Home
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => (window.location.href = "/shop")}
-            >
-              Shop
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => (window.location.href = "/account")}
-            >
-              Account
-            </Button>
-          </nav>
-        </div>
-      </header>
-
       <main className="container px-4 py-8 mx-auto">
         <h1 className="mb-6 text-3xl font-bold">Order History</h1>
 

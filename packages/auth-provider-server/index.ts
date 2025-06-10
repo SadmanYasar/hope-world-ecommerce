@@ -34,12 +34,14 @@ export const authProviderServer: Pick<AuthProvider, "check"> = {
         authenticated: false,
         logout: true,
         redirectTo: "/login",
+        role: null,
       };
     }
 
     if (user) {
       return {
         authenticated: true,
+        role: userRole,
       };
     }
 
@@ -47,6 +49,7 @@ export const authProviderServer: Pick<AuthProvider, "check"> = {
       authenticated: false,
       logout: true,
       redirectTo: "/login",
+      role: null,
     };
   },
 };
