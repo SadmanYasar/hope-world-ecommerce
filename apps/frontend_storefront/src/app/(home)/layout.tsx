@@ -16,7 +16,7 @@ export default async function Layout({ children }: React.PropsWithChildren) {
 
   return (
     <>
-      <Navbar />
+      <Navbar filter />
       {children}
       <ChatBot />
     </>

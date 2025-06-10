@@ -48,7 +48,7 @@ import { downloadImage } from "supabase-package/utils/downloadImage";
 import { supabaseBrowserClient } from "supabase-package/client";
 import { UserData } from "@types";
 
-const Navbar = () => {
+const Navbar = ({ filter = false }: { filter?: boolean }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -85,6 +85,7 @@ const Navbar = () => {
       meta: {
         limit: 100,
       },
+      enabled: filter, // Only run this query if filter is true
     },
   });
 
@@ -151,28 +152,30 @@ const Navbar = () => {
           )}
 
           {/* Search Bar - Desktop */}
-          <div className={`hidden flex-1 mx-4 max-w-xl md:block`}>
-            <div className="flex items-center">
-              <div className="relative flex-1">
-                <Input
-                  type="text"
-                  placeholder="Search for products..."
-                  className="py-2 pl-10 pr-4 border-gray-300 rounded-full border-1 focus:border-gray-400 focus:ring-0"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+          {filter && (
+            <div className={`hidden flex-1 mx-4 max-w-xl md:block`}>
+              <div className="flex items-center">
+                <div className="relative flex-1">
+                  <Input
+                    type="text"
+                    placeholder="Search for products..."
+                    className="py-2 pl-10 pr-4 border-gray-300 rounded-full border-1 focus:border-gray-400 focus:ring-0"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="ml-2"
+                  onClick={toggleFilterMenu}
+                >
+                  <SlidersHorizontal className="w-5 h-5" />
+                </Button>
               </div>
-              <Button
-                variant="outline"
-                size="icon"
-                className="ml-2"
-                onClick={toggleFilterMenu}
-              >
-                <SlidersHorizontal className="w-5 h-5" />
-              </Button>
             </div>
-          </div>
+          )}
 
           {/* Navigation Icons - Desktop */}
           <div className="items-center hidden space-x-2 md:flex">
@@ -239,7 +242,7 @@ const Navbar = () => {
         </div>
 
         {/* Filter Menu - Updated with shadcn components */}
-        {isFilterMenuOpen && (
+        {isFilterMenuOpen && filter && (
           <div className="hidden py-3 mt-2 duration-300 border-t border-gray-200 md:block animate-in slide-in-from-top">
             <div className="flex flex-wrap items-center justify-between mx-auto max-w-7xl">
               <div className="flex flex-wrap gap-4">
@@ -310,9 +313,9 @@ const Navbar = () => {
                     <SelectItem value="rating">Customer Rating</SelectItem> */}
                   </SelectContent>
                 </Select>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleClearFilters}
                   className="ml-2"
                 >
@@ -325,7 +328,7 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile Menu & Search */}
-      {isMobile && mobileMenuOpen && (
+      {isMobile && mobileMenuOpen && filter && (
         <div className="pb-2 mt-3 md:hidden">
           {/* <form onSubmit={handleSearch} className="relative mb-3"> */}
           <div className="relative mb-3">
@@ -427,14 +430,6 @@ const Navbar = () => {
                 </span>
               )}
               <span className="text-xs">Cart</span>
-            </Link>
-            <Link href="/notifications" className="flex flex-col items-center">
-              <Bell className="w-5 h-5 mb-1" />
-              <span className="text-xs">Alerts</span>
-            </Link>
-            <Link href="/messages" className="flex flex-col items-center">
-              <MessageSquare className="w-5 h-5 mb-1" />
-              <span className="text-xs">Messages</span>
             </Link>
             <Link href="/profile" className="flex flex-col items-center">
               <User className="w-5 h-5 mb-1" />
