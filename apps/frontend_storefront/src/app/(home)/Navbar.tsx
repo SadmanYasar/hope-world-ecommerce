@@ -125,7 +125,10 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
         <div className="flex items-center justify-between mx-auto max-w-7xl">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center no-underline">
+            <Link
+              href="/"
+              className="flex items-center text-gray-900 no-underline transition-colors hover:text-primary"
+            >
               <Image
                 src="/logo.png"
                 alt="Hope World"
@@ -180,7 +183,10 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
           {/* Navigation Icons - Desktop */}
           <div className="items-center hidden space-x-2 md:flex">
             <Button variant="ghost" size="icon" asChild className="relative">
-              <Link href="/cart">
+              <Link
+                href="/cart"
+                className="flex items-center justify-center text-gray-700 no-underline transition-colors hover:text-primary"
+              >
                 <ShoppingCart className="w-5 h-5" />
                 {totalItems > 0 && (
                   <span className="absolute flex items-center justify-center w-4 h-4 text-xs rounded-full -top-1 -right-1 bg-primary text-primary-foreground">
@@ -208,7 +214,10 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
                   key={"auth_profile_button"}
                   fallback={
                     <DropdownMenuItem>
-                      <Link href="/login" className="flex w-full">
+                      <Link
+                        href="/login"
+                        className="flex w-full text-gray-700 no-underline transition-colors hover:text-primary"
+                      >
                         Login
                       </Link>
                     </DropdownMenuItem>
@@ -217,12 +226,18 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Link href="/account" className="flex w-full">
+                    <Link
+                      href="/account"
+                      className="flex w-full text-gray-700 no-underline transition-colors hover:text-primary"
+                    >
                       Profile
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Link href="/order-history" className="flex w-full">
+                    <Link
+                      href="/order-history"
+                      className="flex w-full text-gray-700 no-underline transition-colors hover:text-primary"
+                    >
                       Orders
                     </Link>
                   </DropdownMenuItem>
@@ -422,7 +437,10 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
           )}
 
           <div className="flex justify-around">
-            <Link href="/cart" className="relative flex flex-col items-center">
+            <Link
+              href="/cart"
+              className="relative flex flex-col items-center text-gray-700 no-underline transition-colors hover:text-primary"
+            >
               <ShoppingCart className="w-5 h-5 mb-1" />
               {totalItems > 0 && (
                 <span className="absolute flex items-center justify-center w-4 h-4 text-xs rounded-full -top-1 -right-1 bg-primary text-primary-foreground">
@@ -431,9 +449,19 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
               )}
               <span className="text-xs">Cart</span>
             </Link>
-            <Link href="/profile" className="flex flex-col items-center">
+            <Link
+              href="/account"
+              className="flex flex-col items-center text-gray-700 no-underline transition-colors hover:text-primary"
+            >
               <User className="w-5 h-5 mb-1" />
               <span className="text-xs">Profile</span>
+            </Link>
+            <Link
+              href="/order-history"
+              className="flex flex-col items-center text-gray-700 no-underline transition-colors hover:text-primary"
+            >
+              <User className="w-5 h-5 mb-1" />
+              <span className="text-xs">Orders</span>
             </Link>
           </div>
         </div>

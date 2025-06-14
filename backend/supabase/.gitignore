@@ -1,3 +1,4 @@
 .temp
 .env
 .env.local
+*.sql

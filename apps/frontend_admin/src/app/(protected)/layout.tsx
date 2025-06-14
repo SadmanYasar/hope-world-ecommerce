@@ -11,7 +11,10 @@ import { authProviderServer } from "auth-provider-server";
 export default async function Layout({ children }: React.PropsWithChildren) {
   const data = await getData();
 
-  if (!data.authenticated) {
+  if (
+    !data.authenticated ||
+    !["admin", "moderator"].includes(data.role || "")
+  ) {
     return redirect(data?.redirectTo || "/login");
   }
 
@@ -23,10 +26,16 @@ export default async function Layout({ children }: React.PropsWithChildren) {
 }
 
 async function getData() {
-  const { authenticated, redirectTo } = await authProviderServer.check();
+  const { authenticated, redirectTo, role } =
+    (await authProviderServer.check()) as {
+      authenticated: boolean;
+      redirectTo?: string;
+      role: string | null;
+    };
 
   return {
     authenticated,
     redirectTo,
+    role,
   };
 }
