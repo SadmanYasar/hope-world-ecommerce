@@ -24,6 +24,7 @@ import {
   OrderedListOutlined,
   ProductOutlined,
   ReadOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 
 export const metadata: Metadata = {
@@ -158,6 +159,28 @@ export default function RootLayout({
                           icon: <OrderedListOutlined />,
                         },
                       },
+                      {
+                        name: "profiles",
+                        list: "/profiles",
+                        create: "/profiles/create",
+                        edit: "/profiles/edit/:id",
+                        show: "/profiles/show/:id",
+                        meta: {
+                          canDelete: true,
+                          hide: true,
+                          icon: <TeamOutlined />,
+                        },
+                      },
+                      // {
+                      //   name: "profiles_with_roles",
+                      //   list: "/profiles_with_roles",
+                      //   meta: {
+                      //     label: "User Roles",
+                      //     icon: <TeamOutlined />,
+                      //     hide: true,
+                      //     dataProviderName: "default",
+                      //   },
+                      // },
                     ]}
                     options={{
                       syncWithLocation: true,

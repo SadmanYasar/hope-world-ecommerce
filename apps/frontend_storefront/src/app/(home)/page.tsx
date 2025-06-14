@@ -28,6 +28,7 @@ import randomHeight from "@utils/randomHeight";
 import ImageCarousel from "@components/ui/imageCarousel";
 import { useFilterStore } from "@store/filter-store";
 import { useDebounce } from "@components/ui/multiple-selector";
+import Loading from "@components/ui/loading";
 
 interface Product {
   id: string;
@@ -43,13 +44,13 @@ interface GetProductsResponse {
   nextPage: number | null;
 }
 
-const Loading = () => {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="border-t-2 border-b-2 border-gray-900 rounded-full w-9 h-9 animate-spin" />
-    </div>
-  );
-};
+// const Loading = () => {
+//   return (
+//     <div className="flex items-center justify-center h-screen">
+//       <div className="border-t-2 border-b-2 border-gray-900 rounded-full w-9 h-9 animate-spin" />
+//     </div>
+//   );
+// };
 
 export default function ProductsPage() {
   const { category, sortByDate, search, sortByPrice, priceRange, rating } =
