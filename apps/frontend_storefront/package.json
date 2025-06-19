@@ -6,7 +6,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS=--max_old_space_size=4096 refine dev",
+    "dev": "cross-env NODE_OPTIONS=--max_old_space_size=4096 refine dev --port 3000",
     "dev:prod": "cross-env NODE_OPTIONS=--max_old_space_size=4096 refine dev",
     "dev:local": "NODE_ENV=development cross-env NODE_OPTIONS=--max_old_space_size=4096 refine dev",
     "build": "refine build",
