@@ -26,7 +26,7 @@ export default defineConfig({
       testDir: './tests/admin',
       use: {
         ...devices["Desktop Chrome"],
-        baseURL: "http://localhost:3001",
+        baseURL: "http://localhost:3000",
       },
     },
   ],
@@ -41,7 +41,7 @@ export default defineConfig({
     },
     {
       command: "yarn run admin",
-      url: "http://localhost:3001",
+      url: "http://localhost:3000",
       reuseExistingServer: !process.env.CI,
       stdout: "pipe",
       stderr: "pipe",

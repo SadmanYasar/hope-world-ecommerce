@@ -9,8 +9,8 @@
     "packages/*"
   ],
   "scripts": {
-    "storefront": "yarn --cwd apps/frontend_storefront dev -p 3000",
-    "admin": "yarn --cwd apps/frontend_admin dev -p 3001",
+    "storefront": "yarn --cwd apps/frontend_storefront dev",
+    "admin": "yarn --cwd apps/frontend_admin dev",
     "test": "playwright test"
   },
   "dependencies": {
