@@ -1,6 +1,7 @@
 {
   "name": "hope-world-ecommerce",
-  "packageManager": "yarn@4.7.0",
+  "version": "1.0.0",
+  "packageManager": "yarn@1.22.19",
   "license": "GPL-3.0-only",
   "private": true,
   "workspaces": [
@@ -8,13 +9,17 @@
     "packages/*"
   ],
   "scripts": {
-    "storefront": "yarn --cwd apps/frontend_storefront dev",
-    "admin": "yarn --cwd apps/frontend_admin dev",
-    "dev": "npm-run-all --parallel storefront admin"
+    "storefront": "yarn --cwd apps/frontend_storefront dev -p 3000",
+    "admin": "yarn --cwd apps/frontend_admin dev -p 3001",
+    "test": "playwright test"
   },
   "dependencies": {
     "jwt-decode": "^4.0.0",
     "npm-run-all": "^4.1.5",
     "react-dropzone": "^14.3.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.53.1",
+    "@types/node": "^24.0.3"
   }
 }

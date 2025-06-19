@@ -61,7 +61,7 @@ export default function DashboardPage() {
   const [productRatings, setProductRatings] = useState<any[]>([]);
 
   // Fetch summary stats
-  const { data: productCount } = useList({
+  const { data: productCount, isLoading: productListLoading } = useList({
     resource: "products",
     pagination: { pageSize: 1, current: 1 },
     meta: { count: true },

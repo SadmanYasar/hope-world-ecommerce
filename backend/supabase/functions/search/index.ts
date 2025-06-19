@@ -1,44 +1,41 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { Database } from "../_shared/database.types.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai";
-
-const supabase = createClient<Database>(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+const supabase = createClient(
+  Deno.env.get("SUPABASE_URL"),
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
 );
-
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 console.log("GEMINI_API_KEY:", GEMINI_API_KEY);
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
-const modelGemini = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const modelGemini = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+});
 const model = new Supabase.ai.Session("gte-small");
-
 Deno.serve(async (req) => {
   try {
     // This is needed if you're planning to invoke your function from a browser.
     if (req.method === "OPTIONS") {
-      return new Response("ok", { headers: corsHeaders });
+      return new Response("ok", {
+        headers: corsHeaders,
+      });
     }
-
     const { search } = await req.json();
     if (!search) {
       return new Response("Please provide a search param!", {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
         status: 400,
       });
     }
-
     // Generate embedding for search term.
     const embedding = await model.run(search, {
       mean_pool: true,
       normalize: true,
     });
-
     // Query embeddings.
     const { data: result, error } = await supabase
       .rpc("query_products_embedding", {
@@ -51,7 +48,6 @@ Deno.serve(async (req) => {
       console.log("Error querying products:", error);
       throw error;
     }
-
     const prompt = `
     You are a chatbot that helps users find products. Given the search term "${search}", please provide a list of relevant products in markdown format. Each product should include the following information:
     
@@ -68,23 +64,36 @@ Deno.serve(async (req) => {
     **Search Results:**
     ${JSON.stringify(result)}
   `;
-
     const { response } = await modelGemini.generateContent(prompt);
-
-    return Response.json({ search, response: response.text() }, {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return Response.json(
+      {
+        search,
+        response: response.text(),
+      },
+      {
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+        status: 200,
+      }
+    );
   } catch (error) {
     console.log("Error in catch:", error);
-    return Response.json({ error }, {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return Response.json(
+      {
+        error,
+      },
+      {
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+        status: 500,
+      }
+    );
   }
-});
-
-/* To invoke locally:
+}); /* To invoke locally:
 
   1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
   2. Run `supabase functions serve`

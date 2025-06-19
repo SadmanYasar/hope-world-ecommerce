@@ -1,0 +1,82 @@
+name: Vercel Preview Deployment
+
+on:
+  pull_request:
+  push:
+    branches-ignore:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [storefront, admin]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+      
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run Playwright tests for ${{ matrix.project }}
+        run: npx playwright test --project=${{ matrix.project }}
+
+  deploy-preview:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    strategy:
+      matrix:
+        include:
+          - app: frontend_storefront
+            project_id: VERCEL_PROJECT_ID_STOREFRONT
+          - app: frontend_admin
+            project_id: VERCEL_PROJECT_ID_ADMIN
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # To check which files changed
+      
+      - name: Check if app changed
+        id: check_changes
+        run: |
+          git diff HEAD^ HEAD --quiet apps/${{ matrix.app }} || echo "changed=true" >> $GITHUB_OUTPUT
+      
+      - name: Install Vercel CLI
+        if: steps.check_changes.outputs.changed == 'true'
+        run: npm install --global vercel@latest
+      
+      - name: Pull Vercel Environment Information
+        if: steps.check_changes.outputs.changed == 'true'
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id] }}
+      
+      - name: Build Project Artifacts
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          cd apps/${{ matrix.app }}
+          vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id] }}
+      
+      - name: Deploy to Vercel Preview
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          cd apps/${{ matrix.app }}
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id] }}

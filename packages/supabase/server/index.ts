@@ -6,13 +6,13 @@ import {
   SUPABASE_SERVICE_KEY,
 } from "../utils/constants";
 
-interface SupbaseClientOptions {
+interface SupabaseClientOptions {
   admin?: boolean | undefined;
 }
 
 export const createSupabaseServerClient = ({
   admin = false,
-}: SupbaseClientOptions = {}) => {
+}: SupabaseClientOptions = {}) => {
   const cookieStore = cookies();
 
   return createServerClient(
