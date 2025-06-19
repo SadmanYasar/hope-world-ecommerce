@@ -5,8 +5,8 @@ test("storefront homepage has text and loads successfully", async ({
 }) => {
   await page.goto("/");
 
-  // Check that the page loads without errors by checking there is a text that says Hope World
-  expect(page.content()).toContain("Hope World");
+  // Check for text with a locator instead of checking entire page content
+  await expect(page.getByText("Hope World")).toBeVisible();
 
   // Basic check that the page content is loaded
   await expect(page.locator("body")).not.toBeEmpty();
