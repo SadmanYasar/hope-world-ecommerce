@@ -8,7 +8,7 @@ import {
   Show,
   TextField,
 } from "@refinedev/antd";
-import { useOne, useShow } from "@refinedev/core";
+import { BaseRecord, useOne, useShow } from "@refinedev/core";
 import { Image, Typography, Table, Tag, Card } from "antd";
 import Link from "next/link";
 
@@ -99,7 +99,7 @@ export default function OrderShow() {
 
           return (
             <Image.PreviewGroup>
-              {images.map((image: any, index: number) => (
+              {images.map((image: BaseRecord, index: number) => (
                 <Image
                   width={50}
                   height={50}
@@ -124,7 +124,7 @@ export default function OrderShow() {
     {
       title: "View",
       key: "view",
-      render: (_: any, record: any) =>
+      render: (_: BaseRecord, record: BaseRecord) =>
         record?.product?.id ? (
           <Link
             href={`/products/show/${record.product.id}`}
@@ -139,7 +139,7 @@ export default function OrderShow() {
     },
   ];
 
-  const formatAddress = (addressObj: any) => {
+  const formatAddress = (addressObj: BaseRecord) => {
     if (!addressObj) return "-";
 
     // Convert address object to string if it's an object

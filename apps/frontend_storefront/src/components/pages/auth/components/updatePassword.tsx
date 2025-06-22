@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   useActiveAuthProvider,
   useTranslate,
@@ -48,6 +48,16 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
+
+  useEffect(() => {
+    // Validate passwords whenever either field changes
+    if (confirmPassword === "") {
+      setPasswordsMatch(true);
+    } else {
+      setPasswordsMatch(newPassword === confirmPassword);
+    }
+  }, [newPassword, confirmPassword]);
 
   const content = (
     <>
@@ -67,11 +77,13 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    updatePassword({
-                      ...mutationVariables,
-                      password: newPassword,
-                      confirmPassword,
-                    });
+                    if (passwordsMatch) {
+                      updatePassword({
+                        ...mutationVariables,
+                        password: newPassword,
+                        confirmPassword,
+                      });
+                    }
                   }}
                   {...formProps}
                 >
@@ -111,13 +123,21 @@ export const UpdatePasswordPage: React.FC<UpdatePasswordProps> = ({
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         className="p-2 mb-2 border border-gray-300 rounded-md"
                       />
+                      {!passwordsMatch && (
+                        <span className="text-sm text-red-500">
+                          {translate(
+                            "pages.updatePassword.errors.passwordMismatch",
+                            "Passwords do not match"
+                          )}
+                        </span>
+                      )}
                     </div>
 
                     <br />
                     <Button
                       type="submit"
                       variant={"default"}
-                      disabled={isLoading}
+                      disabled={isLoading || !passwordsMatch}
                       className="px-4 py-2 mt-2 text-white rounded-md bg-blue-950 hover:bg-blue-950"
                     >
                       {translate(

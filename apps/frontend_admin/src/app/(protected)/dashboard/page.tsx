@@ -1,6 +1,6 @@
 "use client";
 
-import { useList, useOne, useCustom } from "@refinedev/core";
+import { useList, useOne, useCustom, BaseRecord } from "@refinedev/core";
 import {
   Card,
   Col,
@@ -55,10 +55,10 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
 export default function DashboardPage() {
   const [timeRange, setTimeRange] = useState("week");
-  const [orderData, setOrderData] = useState<any[]>([]);
-  const [categoryData, setCategoryData] = useState<any[]>([]);
-  const [roleDistribution, setRoleDistribution] = useState<any[]>([]);
-  const [productRatings, setProductRatings] = useState<any[]>([]);
+  const [orderData, setOrderData] = useState<BaseRecord[]>([]);
+  const [categoryData, setCategoryData] = useState<BaseRecord[]>([]);
+  const [roleDistribution, setRoleDistribution] = useState<BaseRecord[]>([]);
+  const [productRatings, setProductRatings] = useState<BaseRecord[]>([]);
 
   // Fetch summary stats
   const { data: productCount, isLoading: productListLoading } = useList({
@@ -141,7 +141,7 @@ export default function DashboardPage() {
   // Process revenue data
   const totalRevenue =
     revenueData?.data?.reduce(
-      (sum: number, order: any) => sum + (order.total_amount || 0),
+      (sum: number, order: BaseRecord) => sum + (order.total_amount || 0),
       0
     ) || 0;
 
@@ -167,12 +167,12 @@ export default function DashboardPage() {
   useEffect(() => {
     if (categories?.data && topProducts?.data) {
       const catMap = new Map();
-      categories.data.forEach((cat: any) => {
+      categories.data.forEach((cat: BaseRecord) => {
         catMap.set(cat.id, { name: cat.text, count: 0 });
       });
 
       // Count products per category - this is simplified; in a real app you'd query this from backend
-      topProducts.data.forEach((product: any) => {
+      topProducts.data.forEach((product: BaseRecord) => {
         if (product.category && catMap.has(product.category.id)) {
           const cat = catMap.get(product.category.id);
           catMap.set(product.category.id, { ...cat, count: cat.count + 1 });
@@ -199,7 +199,7 @@ export default function DashboardPage() {
         customer: 0,
       };
 
-      profilesWithRoles.data.forEach((profile: any) => {
+      profilesWithRoles.data.forEach((profile: BaseRecord) => {
         const role = profile.role || "customer";
         roles[role] = (roles[role] || 0) + 1;
       });
@@ -218,7 +218,7 @@ export default function DashboardPage() {
     if (topProducts?.data) {
       const ratings: Record<string, number> = {};
 
-      topProducts.data.forEach((product: any) => {
+      topProducts.data.forEach((product: BaseRecord) => {
         const rating = Math.floor(product.rating || 0);
         ratings[rating] = (ratings[rating] || 0) + 1;
       });
@@ -339,7 +339,7 @@ export default function DashboardPage() {
               value={
                 topProducts?.data
                   ? topProducts.data.reduce(
-                      (sum: number, product: any) =>
+                      (sum: number, product: BaseRecord) =>
                         sum + (product.rating || 0),
                       0
                     ) / topProducts.data.length

@@ -1,18 +1,13 @@
 "use client";
 
 import {
-  DateField,
   ImageField,
-  MarkdownField,
-  NumberField,
   Show,
   TextField,
 } from "@refinedev/antd";
-import { useOne, useShow } from "@refinedev/core";
-import { Button, Col, Flex, Row, Typography } from "antd";
+import { useShow } from "@refinedev/core";
+import { Button, Flex, Row, Typography } from "antd";
 import Modal from "antd/lib/modal";
-import Image from "next/image";
-import Script from "next/script";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { QRCode, IProps } from "react-qrcode-logo";
 import C from "../../c.png";
@@ -21,7 +16,7 @@ import { STORE_URL } from "app-constants";
 
 const { Title } = Typography;
 
-interface IARCollectible {
+interface IARCollectibleState {
   ecLevel: IProps["ecLevel"];
   logoImage: IProps["logoImage"];
   logoPadding: IProps["logoPadding"];
@@ -35,7 +30,7 @@ export default function ARCollectibleShow() {
   const [iframeSrc, setIframeSrc] = useState("");
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const ref = useRef<QRCode>();
-  const [state, setState] = useState<IARCollectible>({
+  const [state, setState] = useState<IARCollectibleState>({
     ecLevel: "H",
     logoImage: C.src,
     logoPadding: 4,

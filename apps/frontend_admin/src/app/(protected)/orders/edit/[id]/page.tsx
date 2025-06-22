@@ -5,6 +5,7 @@ import { Form, Input, InputNumber, Button, DatePicker, Select, Card, Row, Col } 
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { BaseRecord } from "@refinedev/core";
 
 // Enable custom parse format for dayjs
 dayjs.extend(customParseFormat);
@@ -13,13 +14,13 @@ export default function OrderEdit() {
   const { formProps, saveButtonProps, queryResult } = useForm();
 
   // Format dates when the form is submitted
-  const onFinish = (values: any) => {
+  const onFinish = (values: BaseRecord) => {
     // Make a deep copy of the values to avoid modifying the original
     const processedValues = { ...values };
 
     // Format the status dates if they exist
     if (processedValues.status && Array.isArray(processedValues.status)) {
-      processedValues.status = processedValues.status.map((statusItem: any) => {
+      processedValues.status = processedValues.status.map((statusItem: BaseRecord) => {
         if (statusItem.date && typeof statusItem.date === "object") {
           // Convert dayjs object to string format
           return {
@@ -49,7 +50,7 @@ export default function OrderEdit() {
   // Convert status date strings to dayjs objects before form rendering
   const initialValues = { ...record };
   if (initialValues?.status && Array.isArray(initialValues.status)) {
-    initialValues.status = initialValues.status.map((item: any) => {
+    initialValues.status = initialValues.status.map((item: BaseRecord) => {
       if (item.date) {
         // Handle dates with single-digit days
         try {

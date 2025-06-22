@@ -2,7 +2,7 @@
 
 import type { AuthProvider } from "@refinedev/core";
 import { toast } from "react-toastify";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 import { supabaseBrowserClient } from "../supabase/client";
 
 export const authProviderClient: AuthProvider = {
@@ -132,18 +132,20 @@ export const authProviderClient: AuthProvider = {
     console.log(result);
 
     if (!result.error) {
-      toast.success("Password reset instructions sent to " + email);
-
       return {
         success: true,
+        successNotification: {
+          message: "Password reset instructions sent to " + email,
+          description: "Please check your email to reset your password.",
+        },
       };
     }
 
     return {
       success: false,
       error: {
-        name: "Error",
-        message: "Invalid email",
+        name: result.error?.message || "Error",
+        message: "Failed to send password reset instructions",
       },
     };
   },
@@ -159,25 +161,30 @@ export const authProviderClient: AuthProvider = {
       };
     }
 
-    const result: any = await supabaseBrowserClient.auth.updateUser({
+    const result = await supabaseBrowserClient.auth.updateUser({
       password,
     });
 
-    if (result.ok) {
-      toast.success("Password updated successfully");
+    console.log("update password result", result);
+
+    if (!result.error) {
+      // toast.success("Password updated successfully");
 
       return {
         success: true,
         authenticated: false,
         logout: true,
         redirectTo: "/login",
+        successNotification: {
+          message: "Password updated successfully",
+        },
       };
     }
 
     return {
       success: false,
       error: {
-        name: "Error",
+        name: result.error?.message || "Error",
         message: "Failed to update password",
       },
     };
