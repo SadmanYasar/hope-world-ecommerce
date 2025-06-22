@@ -14,21 +14,28 @@ import Modal from "antd/lib/modal";
 import Image from "next/image";
 import Script from "next/script";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { QRCode } from "react-qrcode-logo";
+import { QRCode, IProps } from "react-qrcode-logo";
 import C from "../../c.png";
 import { generateARHtml } from "ar_viewer";
 import { STORE_URL } from "app-constants";
 
 const { Title } = Typography;
 
+interface IARCollectible {
+  ecLevel: IProps["ecLevel"];
+  logoImage: IProps["logoImage"];
+  logoPadding: IProps["logoPadding"];
+  size: IProps["size"];
+}
+
 export default function ARCollectibleShow() {
-  const { queryResult } = useShow({});
-  const { data, isLoading } = queryResult;
+  const { query } = useShow({});
+  const { data, isLoading } = query;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [iframeSrc, setIframeSrc] = useState("");
-  const iframeRef = useRef<any>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const ref = useRef<QRCode>();
-  const [state, setState] = useState<{ [key: string]: any }>({
+  const [state, setState] = useState<IARCollectible>({
     ecLevel: "H",
     logoImage: C.src,
     logoPadding: 4,
@@ -66,7 +73,7 @@ export default function ARCollectibleShow() {
   };
 
   useEffect(() => {
-    let url: any;
+    let url: string | null = null;
     if (isModalVisible) {
       const imageSrc = record?.image && JSON.parse(record?.image)?.[0]?.url;
       const html = generateARHtml(imageSrc);
@@ -117,7 +124,7 @@ export default function ARCollectibleShow() {
         footer={null}
         width="100%"
         style={{ top: 0 }}
-        bodyStyle={{ height: "100vh", padding: 0 }}
+        styles={{ body: { height: "100vh", padding: 0 } }}
       >
         {iframeSrc && (
           <iframe

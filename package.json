@@ -11,7 +11,8 @@
   "scripts": {
     "storefront": "yarn --cwd apps/frontend_storefront dev",
     "admin": "yarn --cwd apps/frontend_admin dev",
-    "test": "playwright test"
+    "test": "playwright test",
+    "dev": "npm-run-all --parallel storefront admin"
   },
   "dependencies": {
     "jwt-decode": "^4.0.0",
