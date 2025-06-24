@@ -1,7 +1,7 @@
 "use client";
 
 import { useList } from "@refinedev/core";
-import { Col, Row, Spin, Divider, Typography } from "antd";
+import { Col, Row, Spin, Divider, Typography, Button } from "antd";
 import {
   ShoppingOutlined,
   UserOutlined,
@@ -11,8 +11,9 @@ import {
   ShoppingCartOutlined,
   BookOutlined,
   InboxOutlined,
+  FilePdfOutlined,
 } from "@ant-design/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import {
   StatisticsCard,
@@ -23,6 +24,7 @@ import {
   ProductRatingsChart,
   formatCurrencyWithK,
   formatPrice,
+  exportDashboardToPDF,
 } from "@/components/dashboard";
 
 const { Title } = Typography;
@@ -30,6 +32,8 @@ const { Title } = Typography;
 export default function DashboardPage() {
   const [roleDistribution, setRoleDistribution] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [exportLoading, setExportLoading] = useState(false);
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
   // Fetch summary stats with estimated counts for better performance
   const { data: productCountData, isLoading: productListLoading } = useList({
@@ -199,6 +203,16 @@ export default function DashboardPage() {
     }
   }, [profilesWithRoles]);
 
+  // Handle PDF export
+  const handleExportToPDF = async () => {
+    setExportLoading(true);
+    try {
+      await exportDashboardToPDF(dashboardRef);
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   // Check if anything is still loading
   const isLoading =
     productListLoading ||
@@ -247,10 +261,22 @@ export default function DashboardPage() {
   const avgOrderValue = orderTotal > 0 ? totalRevenue / orderTotal : 0;
 
   return (
-    <div className="dashboard">
+    <div className="dashboard" ref={dashboardRef}>
       <Row gutter={[16, 16]}>
-        <Col span={24}>
+        <Col span={18}>
           <Title level={2}>Dashboard</Title>
+        </Col>
+        <Col span={6} style={{ textAlign: 'right' }}>
+          <Button 
+            type="primary" 
+            icon={<FilePdfOutlined />} 
+            onClick={handleExportToPDF}
+            loading={exportLoading}
+          >
+            Export to PDF
+          </Button>
+        </Col>
+        <Col span={24}>
           <Divider />
         </Col>
       </Row>
