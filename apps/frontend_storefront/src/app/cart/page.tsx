@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCartStore } from "@/store/cart-store";
 import { loadStripe } from "@stripe/stripe-js";
-import { Authenticated, useGetIdentity } from "@refinedev/core";
+import { Authenticated, useGetIdentity, useMany } from "@refinedev/core";
 import { createCheckoutSession } from "../actions/checkout";
 import { Button } from "@components/ui/button";
 import {
@@ -30,6 +30,7 @@ const CartPage = () => {
     clearCart,
     removeItem,
     updateQuantity,
+    setItems,
   } = useCartStore();
   const [loading, setLoading] = useState(false);
   const { data: user } = useGetIdentity<UserData>();
@@ -45,6 +46,116 @@ const CartPage = () => {
       email: user?.email,
     });
   };
+
+  //validate whether the products exist in supabase
+  const { error, refetch } = useMany({
+    resource: "products",
+    liveParams: {
+      ids: items.map((item) => item.id),
+    },
+    ids: items.map((item) => item.id),
+    liveMode: "manual",
+    onLiveEvent: async (event) => {
+      console.log("Live event received:", event);
+      await refetch();
+    },
+    queryOptions: {
+      enabled: items.length > 0,
+      onSuccess: (data) => {
+        console.log("Fetched products:", data.data);
+        console.log("Current cart items:", items);
+
+        // Enhanced debugging
+        console.log(
+          "Product IDs from database:",
+          data.data.map((p) => String(p.id))
+        );
+        console.log(
+          "Cart item IDs:",
+          items.map((item) => item.id)
+        );
+
+        // More robust comparison
+        const validItems = items.filter((item) => {
+          const matches = data.data.some((product) => {
+            const productIdStr = String(product.id);
+            const itemIdStr = String(item.id);
+            const matches = productIdStr === itemIdStr;
+            console.log(
+              `Comparing: product ID ${productIdStr} with cart item ID ${itemIdStr}: ${matches}`
+            );
+            return matches;
+          });
+          return matches;
+        });
+
+        console.log("Valid items after filtering:", validItems);
+
+        if (validItems.length === 0 && items.length > 0) {
+          console.warn("No valid items found despite having cart items!");
+          // If no valid items found but we have items in cart, use cart items as fallback
+          setItems(items);
+          return;
+        }
+
+        // Update the cart state with valid items
+        const updatedItems = validItems.map((item) => {
+          const product = data.data.find(
+            (p) => String(p.id) === String(item.id)
+          );
+
+          // Parse the images JSON string if it exists
+          let imageUrl = item.image || ""; // Keep existing image as fallback
+          if (product?.images) {
+            try {
+              const imagesData = JSON.parse(product.images);
+              // Extract the first image URL if available
+              if (Array.isArray(imagesData) && imagesData.length > 0) {
+                // Try various possible properties where the image URL might be stored
+                imageUrl =
+                  imagesData[0].url ||
+                  imagesData[0].name ||
+                  imagesData[0].thumbUrl ||
+                  "";
+                console.log("Found image URL:", imageUrl);
+              } else if (
+                typeof imagesData === "object" &&
+                imagesData !== null
+              ) {
+                imageUrl = imagesData.url || "";
+              }
+            } catch (e) {
+              console.error(
+                "Error parsing images JSON:",
+                e,
+                "Raw images data:",
+                product.images
+              );
+            }
+          }
+
+          return {
+            id: item.id,
+            name: product?.name || item.name,
+            price: product?.price || item.price,
+            quantity: item.quantity,
+            image: imageUrl || "/placeholder-image.jpg", // Fallback to placeholder
+          };
+        });
+
+        console.log("Updated cart items:", updatedItems);
+        setItems(updatedItems);
+      },
+    },
+    meta: {
+      select: "id, name, price, images",
+    },
+  });
+
+  if (error) {
+    console.error("Error fetching products:", error);
+    return <p>Error loading cart items.</p>;
+  }
 
   return (
     <Authenticated key={"cart-page"}>
@@ -79,11 +190,16 @@ const CartPage = () => {
                     <div className="flex items-start p-4">
                       <div className="flex-shrink-0 mr-4">
                         <Image
-                          src={item.image}
+                          src={item.image || "/placeholder-image.jpg"}
                           alt={item.name}
                           className="object-cover w-16 h-16 rounded"
                           width={64}
                           height={64}
+                          onError={(e) => {
+                            // Fallback to placeholder if image fails to load
+                            (e.target as HTMLImageElement).src =
+                              "/placeholder-image.jpg";
+                          }}
                         />
                       </div>
                       <div className="flex-1">

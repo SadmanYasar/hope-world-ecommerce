@@ -8,12 +8,6 @@ import Navbar from "./Navbar";
 import ChatBot from "@components/chat/chat";
 
 export default async function Layout({ children }: React.PropsWithChildren) {
-  const data = await getData();
-
-  //   if (!data.authenticated) {
-  //     return redirect(data?.redirectTo || "/login");
-  //   }
-
   return (
     <>
       <Navbar filter />
@@ -21,13 +15,4 @@ export default async function Layout({ children }: React.PropsWithChildren) {
       <ChatBot />
     </>
   );
-}
-
-async function getData() {
-  const { authenticated, redirectTo } = await authProviderServer.check();
-
-  return {
-    authenticated,
-    redirectTo,
-  };
 }

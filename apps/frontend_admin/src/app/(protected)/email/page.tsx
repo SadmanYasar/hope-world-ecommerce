@@ -6,17 +6,18 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import Email from "./_components/email";
 import { useContext, useState } from "react";
+import dynamic from "next/dynamic";
+import { render } from "@react-email/components";
 
 import { useNotification } from "@refinedev/core";
-import { render } from "@react-email/components";
-import MDEditor from "@uiw/react-md-editor";
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 import { ColorModeContext } from "@contexts/color-mode";
 
 export default function EmailPage() {
   const [html, setHtml] = useState<string>();
   const { open, close } = useNotification();
   const { mode } = useContext(ColorModeContext);
-  console.log("mode", mode);
 
   const onFinish: FormProps["onFinish"] = async (values) => {
     //return if values has no to, subject, or content
@@ -25,6 +26,9 @@ export default function EmailPage() {
     }
 
     try {
+      const email = await render(<Email content={html} />);
+      console.log("email", email);
+
       const response = await supabaseBrowserClient.functions.invoke("email", {
         body: {
           to: values.to,

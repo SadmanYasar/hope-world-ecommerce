@@ -9,12 +9,6 @@ import Navbar from "@app/(home)/Navbar";
 import ChatBot from "@components/chat/chat";
 
 export default async function Layout({ children }: React.PropsWithChildren) {
-  const data = await getData();
-
-  if (!data.authenticated) {
-    return redirect(data?.redirectTo || "/login");
-  }
-
   return (
     <>
       <Navbar />

@@ -1,12 +1,14 @@
 "use client";
 
 import {
+  CreateButton,
   DateField,
   DeleteButton,
   EditButton,
   getDefaultSortOrder,
   List,
   NumberField,
+  RefreshButton,
   ShowButton,
   useTable,
 } from "@refinedev/antd";
@@ -137,7 +139,14 @@ export default function OrderList() {
           </Card>
         </Col>
         <Col lg={18} xs={24}>
-          <List>
+          <List
+            headerButtons={
+              <>
+                <RefreshButton />
+                <CreateButton />
+              </>
+            }
+          >
             <Table {...tableProps} rowKey="id">
               <Table.Column
                 dataIndex="id"

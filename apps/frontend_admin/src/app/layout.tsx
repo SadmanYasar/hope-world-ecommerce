@@ -47,11 +47,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Script src="https://unpkg.com/web-streams-polyfill/dist/polyfill.js" />
         <Suspense>
           <RefineKbarProvider>
             <AntdRegistry>
               <ColorModeContextProvider defaultMode={defaultMode}>
-                <DevtoolsProvider>
+                <>
                   <Refine
                     routerProvider={routerProvider}
                     authProvider={authProviderClient}
@@ -193,7 +194,7 @@ export default function RootLayout({
                     {children}
                     <RefineKbar />
                   </Refine>
-                </DevtoolsProvider>
+                </>
               </ColorModeContextProvider>
             </AntdRegistry>
           </RefineKbarProvider>

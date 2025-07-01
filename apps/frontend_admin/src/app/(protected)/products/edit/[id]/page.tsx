@@ -9,8 +9,7 @@ import { RcFile } from "antd/lib/upload/interface";
 export default function ProductEdit() {
   const { formProps, saveButtonProps, query } = useForm({
     meta: {
-      select:
-        "id, name, description, price, images, category, visible",
+      select: "id, name, description, price, images, category, visible",
     },
   });
 
@@ -28,10 +27,7 @@ export default function ProductEdit() {
 
   return (
     <Edit saveButtonProps={saveButtonProps} isLoading={query?.isLoading}>
-      <Form
-        {...formProps}
-        layout="vertical"
-      >
+      <Form {...formProps} layout="vertical">
         <Form.Item
           label={"Name"}
           name={["name"]}
@@ -71,8 +67,7 @@ export default function ProductEdit() {
             name="images"
             valuePropName="fileList"
             getValueFromEvent={(event) => {
-              const normalized = normalizeFile(event);
-              return normalized.length > 0 ? [normalized[0]] : [];
+              return normalizeFile(event);
             }}
             getValueProps={(value) => {
               if (typeof value === "string") {
@@ -90,7 +85,8 @@ export default function ProductEdit() {
             <Upload.Dragger
               name="file"
               listType="picture"
-              accept="image/png, image/jpeg"
+              accept="image/png, image/jpeg, image/webp, image/gif"
+              multiple
               maxCount={2}
               customRequest={async ({ file, onError, onSuccess }) => {
                 try {
@@ -134,11 +130,6 @@ export default function ProductEdit() {
           label={"Visible"}
           name={["visible"]}
           valuePropName="checked"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
         >
           <Select
             options={[

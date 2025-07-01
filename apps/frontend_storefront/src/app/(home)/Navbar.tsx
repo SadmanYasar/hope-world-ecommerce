@@ -122,7 +122,7 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
   return (
     <>
       <nav className="sticky top-0 z-50 px-4 py-3 bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between mx-auto max-w-7xl">
+        <div className="flex items-center justify-between mx-auto">
           {/* Logo */}
           <div className="flex items-center">
             <Link

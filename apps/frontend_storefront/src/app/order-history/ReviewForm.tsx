@@ -46,7 +46,7 @@ export function ReviewForm({
         values: {
           product_id: productId,
           order_id: orderId,
-          rating,
+          rating: Number(rating), // Ensure rating is a number
           comment: comment.trim() || null,
         },
       },
@@ -59,8 +59,9 @@ export function ReviewForm({
           onClose();
         },
         onError: (error) => {
-          console.error("Error submitting review:", error);
+          console.error("Review submission failed:", error);
           setIsSubmitting(false);
+          // Add user feedback here if needed
         },
       }
     );

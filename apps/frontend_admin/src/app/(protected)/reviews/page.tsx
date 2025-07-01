@@ -9,7 +9,19 @@ import {
   useTable,
 } from "@refinedev/antd";
 import { BaseRecord, useMany, CrudFilters, HttpError } from "@refinedev/core";
-import { Space, Table, Rate, Card, Row, Col, Form, Input, Button, DatePicker, Select } from "antd";
+import {
+  Space,
+  Table,
+  Rate,
+  Card,
+  Row,
+  Col,
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Select,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { FormProps } from "antd/lib";
 
@@ -87,7 +99,7 @@ export default function ReviewsList() {
           </Card>
         </Col>
         <Col lg={18} xs={24}>
-          <List>
+          <List headerButtons={<></>}>
             <Table {...tableProps} rowKey="id">
               <Table.Column dataIndex="id" title={"ID"} />
               <Table.Column
@@ -100,7 +112,9 @@ export default function ReviewsList() {
               <Table.Column
                 dataIndex="rating"
                 title={"Rating"}
-                render={(value: number) => <Rate disabled defaultValue={value} />}
+                render={(value: number) => (
+                  <Rate disabled defaultValue={value} />
+                )}
               />
               <Table.Column
                 dataIndex="comment"
@@ -116,16 +130,30 @@ export default function ReviewsList() {
               <Table.Column
                 dataIndex="created_at"
                 title={"Date"}
-                render={(value) => <DateField format="MM/DD/YYYY" value={value} />}
+                render={(value) => (
+                  <DateField format="MM/DD/YYYY" value={value} />
+                )}
               />
               <Table.Column
                 title={"Actions"}
                 dataIndex="actions"
                 render={(_, record: BaseRecord) => (
                   <Space>
-                    <ShowButton hideText size="small" recordItemId={record.id} />
-                    <EditButton hideText size="small" recordItemId={record.id} />
-                    <DeleteButton hideText size="small" recordItemId={record.id} />
+                    <ShowButton
+                      hideText
+                      size="small"
+                      recordItemId={record.id}
+                    />
+                    <EditButton
+                      hideText
+                      size="small"
+                      recordItemId={record.id}
+                    />
+                    <DeleteButton
+                      hideText
+                      size="small"
+                      recordItemId={record.id}
+                    />
                   </Space>
                 )}
               />

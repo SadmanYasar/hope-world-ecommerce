@@ -16,10 +16,9 @@ const { Title } = Typography;
 
 export default function ProductShow() {
   const { query } = useShow({
-    // MIGHT USE THIS FOR REVIEWS
     meta: {
       select:
-        "id, name, description, price, images, category(id,text), visible, summarized_review, tracking_id",
+        "id, name, description, price, images, category(id,text), visible, summarized_review",
     },
   });
   const { data, isLoading } = query;
@@ -42,8 +41,6 @@ export default function ProductShow() {
       <TextField value={record?.id} />
       <Title level={5}>{"Name"}</Title>
       <TextField value={record?.name} />
-      <Title level={5}>{"Tracking ID"}</Title>
-      <TextField value={record?.tracking_id} />
       <Title level={5}>{"Description"}</Title>
       <Title level={5}>{"Images"}</Title>
       <Image.PreviewGroup>

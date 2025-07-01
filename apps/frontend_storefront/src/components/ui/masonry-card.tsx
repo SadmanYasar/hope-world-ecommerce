@@ -63,7 +63,7 @@ export const MasonryCard = ({
               width={imageWidth}
               height={imageHeight}
               // style={{ width: `${imageWidth}px`, height: `${imageHeight}px` }}
-              className="object-cover rounded"
+              className="object-cover bg-red-400 rounded"
               src={imageUrl}
               alt={imageAlt}
             />

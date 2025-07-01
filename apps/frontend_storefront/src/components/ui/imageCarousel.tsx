@@ -77,7 +77,7 @@ const ImageCarousel = ({
                     src={images[index]?.url ?? ""}
                     alt={""}
                     fill
-                    className="object-cover rounded-md"
+                    className="object-cover bg-gray-300 rounded-md"
                   />
                 </div>
               </CarouselItem>
@@ -104,7 +104,7 @@ const ImageCarousel = ({
                   <Image
                     src={images[index]?.url}
                     alt={""}
-                    className="object-cover bg-white rounded-md"
+                    className="object-cover bg-gray-300 rounded-md"
                     fill
                   />
                 </div>

@@ -6,7 +6,6 @@ import Loading from "@components/ui/loading";
 
 export default function Account() {
   const { data, error, isLoading } = useGetIdentity();
-  const role = usePermissions();
 
   if (isLoading) return <Loading />;
   if (error) return <div>Error getting user</div>;

@@ -32,7 +32,7 @@ export default function RootLayout({
       <body>
         <Suspense>
           <RefineKbarProvider>
-            <DevtoolsProvider>
+            <>
               <Refine
                 routerProvider={routerProvider}
                 authProvider={authProviderClient}
@@ -49,7 +49,7 @@ export default function RootLayout({
                 <ToastProvider>{children}</ToastProvider>
                 <RefineKbar />
               </Refine>
-            </DevtoolsProvider>
+            </>
           </RefineKbarProvider>
         </Suspense>
       </body>

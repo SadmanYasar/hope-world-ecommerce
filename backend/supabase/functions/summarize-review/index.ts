@@ -60,6 +60,8 @@ Deno.serve(async (req) => {
         status: 500,
       });
     }
+
+    console.log("Reviews fetched successfully:", reviews);
     if (!reviews || reviews.length === 0) {
       return new Response("No reviews found for this product", {
         headers: {
@@ -69,6 +71,7 @@ Deno.serve(async (req) => {
         status: 404,
       });
     }
+
     // Prepare the reviews for summarization
     const reviewsText = reviews
       .map((review) => {

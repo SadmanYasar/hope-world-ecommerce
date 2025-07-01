@@ -205,7 +205,10 @@ export default function ProductsPage() {
   // if (!data?.pages) return <div>No data found</div>;
 
   return (
-    <>
+    <div
+      id="scrollableDiv"
+      className="container flex flex-col-reverse w-full h-full mx-auto overflow-auto"
+    >
       <InfiniteScroll
         dataLength={allPages.length}
         next={fetchNextPage}
@@ -213,12 +216,18 @@ export default function ProductsPage() {
         loader={
           <div className="mx-auto border-t-2 border-b-2 border-gray-900 rounded-full w-9 h-9 animate-spin" />
         }
-        height={"calc(100vh - 68px)"}
-        className="overflow-auto"
+        className="flex flex-col-reverse"
         scrollableTarget="scrollableDiv"
       >
         <ResponsiveMasonry
-          columnsCountBreakPoints={{ 300: 2, 500: 2, 700: 5, 900: 6 }}
+          columnsCountBreakPoints={{
+            0: 2, // <640px
+            640: 2, // sm
+            768: 3, // md
+            1024: 4, // lg
+            1280: 5, // xl
+            1536: 5, // 2xl
+          }}
           className="p-5"
         >
           <Masonry gutter="20px">
@@ -229,12 +238,13 @@ export default function ProductsPage() {
                 const height = randomHeight(index);
                 return (
                   <Sheet key={index}>
-                    <SheetTrigger className="p-0 bg-none">
+                    <SheetTrigger className="p-0 bg-white border-none">
                       <MasonryCard
                         imageAlt={`Image of product item ${product.id}`}
                         imageUrl={JSON.parse(product.images ?? "[]")[0]?.url}
                         imageWidth={400}
                         imageHeight={height}
+                        className="rounded-2xl"
                       >
                         <ProductCardDetails
                           name={product.name ?? ""}
@@ -249,14 +259,6 @@ export default function ProductsPage() {
                         <SheetTitle>{product?.name}</SheetTitle>
                       </SheetHeader>
                       <div className="flex flex-col gap-4 pt-6 overflow-y-auto grow">
-                        {/* <div className="aspect-square relative w-full max-w-[300px] mx-auto"> */}
-                        {/* <Image
-                            src={JSON.parse(product.images ?? "[]")[0]?.url}
-                            alt={product.name}
-                            fill
-                            className="object-cover rounded-md"
-                          /> */}
-                        {/* </div> */}
                         <ImageCarousel
                           images={JSON.parse(product.images ?? "[]")}
                           className="w-full max-w-[300px] mx-auto"
@@ -266,7 +268,6 @@ export default function ProductsPage() {
                           <h3 className="text-xl font-semibold">
                             {product.name}
                           </h3>
-                          {/* show description */}
                           {product.description && (
                             <p className="text-sm text-gray-700">
                               {product.description}
@@ -288,7 +289,6 @@ export default function ProductsPage() {
                                 <span>Category: {product.category.text}</span>
                               )}
                             </p>
-                            {/* Show summarized review if it exists */}
                             {product.summarized_review && (
                               <div className="mt-2">
                                 <p className="text-sm text-gray-600">
@@ -307,7 +307,7 @@ export default function ProductsPage() {
           </Masonry>
         </ResponsiveMasonry>
       </InfiniteScroll>
-    </>
+    </div>
   );
 }
 

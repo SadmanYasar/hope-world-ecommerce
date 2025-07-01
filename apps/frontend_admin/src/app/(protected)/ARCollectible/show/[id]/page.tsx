@@ -1,7 +1,11 @@
 "use client";
 
 import {
+  DeleteButton,
+  EditButton,
   ImageField,
+  ListButton,
+  RefreshButton,
   Show,
   TextField,
 } from "@refinedev/antd";
@@ -86,8 +90,18 @@ export default function ARCollectibleShow() {
 
   return (
     <>
-      <Button onClick={handleOpenModal}>Preview</Button>
-      <Show isLoading={isLoading}>
+      <Show
+        isLoading={isLoading}
+        headerButtons={
+          <>
+            <Button onClick={handleOpenModal}>Preview</Button>
+            <ListButton />
+            <EditButton />
+            <DeleteButton />
+            <RefreshButton />
+          </>
+        }
+      >
         <Title level={5}>{"ID"}</Title>
         <TextField value={record?.id} />
         <Title level={5}>{"Name"}</Title>

@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
     - **Product 1 Name**: Description of product 1.
     - **Product 2 Name**: Description of product 2.
     
-    Make sure to include only the top 3 products that match the search term.
+    Make sure to include only the top 3 products at max that match the search term. Only include the products that are relevant and you may discard the products that are irrelevant.
 
     **Search Results:**
     ${JSON.stringify(result)}

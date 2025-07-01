@@ -23,6 +23,7 @@ import {
   Space,
   Table,
   Image,
+  Slider,
 } from "antd";
 import { FormProps } from "antd/lib";
 
@@ -278,25 +279,17 @@ const Filter: React.FC<FilterProps> = ({ formProps, setFilters }) => {
         />
       </Form.Item>
       <Form.Item label="Price Range" name="price">
-        <Input.Group compact>
-          <Form.Item name={["price", 0]} noStyle>
-            <Input style={{ width: 100 }} placeholder="Min Price" min={0} />
-          </Form.Item>
-          <Input
-            style={{
-              width: 30,
-              borderLeft: 0,
-              borderRight: 0,
-              pointerEvents: "none",
-              backgroundColor: "#fff",
-            }}
-            placeholder="~"
-            disabled
-          />
-          <Form.Item name={["price", 1]} noStyle>
-            <Input style={{ width: 100 }} placeholder="Max Price" min={0} />
-          </Form.Item>
-        </Input.Group>
+        <Slider
+          range
+          min={0}
+          max={1000}
+          step={10}
+          tipFormatter={(value) => `$${value}`}
+          marks={{
+            0: "$0",
+            1000: "$1000",
+          }}
+        />
       </Form.Item>
       <Form.Item label="Created At" name="createdAt">
         <RangePicker />

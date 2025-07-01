@@ -141,11 +141,12 @@ export default function UserList() {
             <Table.Column
               dataIndex="avatar_url"
               title="Avatar"
-              render={(value: any) => {
+              render={(value: string) => {
                 if (!value) return "-";
                 return (
                   <Image.PreviewGroup>
                     <Image
+                      key={value}
                       width={50}
                       height={50}
                       src={bucket_url + value}

@@ -109,7 +109,7 @@ export default function ProductCreate() {
           valuePropName="checked"
           rules={[
             {
-              required: true,
+              required: false,
             },
           ]}
         >
