@@ -76,7 +76,7 @@ export const authProviderClient: AuthProvider = {
       if (data) {
         //show toast to verify email to login
         toast.success(
-          "Registration successful! Please check your email to verify your account."
+          "Registration successful! Please login to continue."
         );
 
         return {
