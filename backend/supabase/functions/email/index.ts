@@ -29,30 +29,6 @@ Deno.serve(async (req) => {
     );
   }
   try {
-    // const token = req.headers.get("x-unkey-api-key");
-    // if (!token) {
-    //   return new Response("Unauthorized", {
-    //     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    //     status: 401,
-    //   });
-    // }
-    // const { result, error } = await verifyKey(token);
-    // if (error) {
-    //   // handle potential network or bad request error
-    //   // a link to our docs will be in the `error.docs` field
-    //   console.error(error.message);
-    //   return new Response(JSON.stringify({ error: error.message }), {
-    //     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    //     status: 401,
-    //   });
-    // }
-    // if (!result.valid) {
-    //   // do not grant access
-    //   return new Response(JSON.stringify({ error: "API Key is not valid for this request" }), {
-    //     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    //     status: 401,
-    //   });
-    // }
     //send email
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",

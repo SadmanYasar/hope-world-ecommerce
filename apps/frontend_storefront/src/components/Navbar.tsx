@@ -113,11 +113,6 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
   };
 
   console.log("Navbar userData", userData);
-  // const handleSearch = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   // Implement search functionality
-  //   setSearch();
-  // };
 
   return (
     <>
@@ -343,30 +338,32 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
       </nav>
 
       {/* Mobile Menu & Search */}
-      {isMobile && mobileMenuOpen && filter && (
+      {isMobile && mobileMenuOpen && (
         <div className="pb-2 mt-3 md:hidden">
-          {/* <form onSubmit={handleSearch} className="relative mb-3"> */}
-          <div className="relative mb-3">
-            <Input
-              type="text"
-              placeholder="Search for products..."
-              className="py-2 pl-10 pr-4 border-2 border-gray-300 rounded-full"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute transform -translate-y-1/2 bg-transparent border-none rounded-full right-1 top-1/2"
-              onClick={toggleFilterMenu}
-            >
-              <FilterIcon className="w-5 h-5 bg-none" />
-            </Button>
-          </div>
+          {/* Search Bar - Mobile */}
+          {filter && (
+            <div className="relative mb-3">
+              <Input
+                type="text"
+                placeholder="Search for products..."
+                className="py-2 pl-10 pr-4 border-2 border-gray-300 rounded-full"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute transform -translate-y-1/2 bg-transparent border-none rounded-full right-1 top-1/2"
+                onClick={toggleFilterMenu}
+              >
+                <FilterIcon className="w-5 h-5 bg-none" />
+              </Button>
+            </div>
+          )}
 
           {/* Mobile Filter Menu */}
-          {isFilterMenuOpen && (
+          {filter && isFilterMenuOpen && (
             <div className="p-3 mb-4 duration-300 rounded-lg bg-gray-50 animate-in fade-in">
               <div className="grid grid-cols-1 gap-3">
                 <div>
@@ -427,8 +424,6 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
                     <SelectContent>
                       <SelectItem value="asc">Date: Oldest First</SelectItem>
                       <SelectItem value="desc">Date: Newest First</SelectItem>
-                      {/* <SelectItem value="newest">Newest First</SelectItem>
-                    <SelectItem value="rating">Customer Rating</SelectItem> */}
                     </SelectContent>
                   </Select>
                 </div>
@@ -436,6 +431,7 @@ const Navbar = ({ filter = false }: { filter?: boolean }) => {
             </div>
           )}
 
+          {/* Mobile Navigation Icons */}
           <div className="flex justify-around">
             <Link
               href="/cart"

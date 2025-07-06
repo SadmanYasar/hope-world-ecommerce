@@ -16,7 +16,7 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const modelGemini = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
 });
-const model = new Supabase.ai.Session("gte-small");
+
 console.log("Hello from Functions!");
 Deno.serve(async (req) => {
   try {
@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
         headers: corsHeaders,
       });
     }
-    //TODO
+
     //product id is a foreign key in review table
     //get list of reviews for a product id, the recent ten reviews
     //pass the relevant reviews to Gemini or gte-small to summarize
