@@ -225,7 +225,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                 </Checkbox>
               </Form.Item>
             )} */}
-            {forgotPasswordLink ?? (
+            {/* {forgotPasswordLink ?? (
               <ActiveLink
                 style={{
                   color: token.colorPrimaryTextHover,
@@ -239,7 +239,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                   "Forgot password?"
                 )}
               </ActiveLink>
-            )}
+            )} */}
           </div>
           {!hideForm && (
             <Form.Item>

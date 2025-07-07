@@ -245,7 +245,7 @@ export const RegisterPage: React.FC<RegisterProps> = ({
                       )}{" "}
                       {renderLink(
                         "/login",
-                        translate("pages.login.signup", "Sign Up")
+                        translate("pages.login.signin", "Sign In")
                       )}
                     </span>
                   )}

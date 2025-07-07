@@ -278,7 +278,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                     </>
                   )} */}
                   <br />
-                  {forgotPasswordLink ?? (
+                  {/* {forgotPasswordLink ?? (
                     <span className="text-sm">
                       {renderLink(
                         "/forgot-password",
@@ -288,7 +288,7 @@ export const LoginPage: React.FC<LoginProps> = ({
                         )
                       )}
                     </span>
-                  )}
+                  )} */}
                   <Button
                     type="submit"
                     // value={translate("pages.login.signin", "Sign in")}

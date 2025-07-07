@@ -207,7 +207,7 @@ export default function ProductsPage() {
   return (
     <div
       id="scrollableDiv"
-      className="container flex flex-col-reverse w-full h-full mx-auto overflow-auto"
+      className="container flex flex-col w-full h-full mx-auto overflow-auto"
     >
       <InfiniteScroll
         dataLength={allPages.length}
@@ -216,7 +216,8 @@ export default function ProductsPage() {
         loader={
           <div className="mx-auto border-t-2 border-b-2 border-gray-900 rounded-full w-9 h-9 animate-spin" />
         }
-        className="flex flex-col-reverse"
+        height={"100%"}
+        className="flex flex-col"
         scrollableTarget="scrollableDiv"
       >
         <ResponsiveMasonry
