@@ -12,12 +12,12 @@ import { Typography, Rate, Card, Descriptions } from "antd";
 const { Title } = Typography;
 
 export default function ReviewShow() {
-  const { queryResult } = useShow({
+  const { query } = useShow({
     meta: {
       select: "*, product:product_id(*), order:order_id(*)",
     },
   });
-  const { data, isLoading } = queryResult;
+  const { data, isLoading } = query;
 
   const record = data?.data;
 
