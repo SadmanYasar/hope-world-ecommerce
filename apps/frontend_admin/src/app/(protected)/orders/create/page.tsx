@@ -19,11 +19,11 @@ export default function OrderCreate() {
     <Create saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
         <Form.Item
-          label={"Total Amount"}
+          label={"Total Amount (Cents)"}
           name={["total_amount"]}
           rules={[{ required: true }]}
         >
-          <InputNumber prefix="$" style={{ width: "100%" }} />
+          <InputNumber style={{ width: "100%" }} />
         </Form.Item>
 
         <Form.Item
