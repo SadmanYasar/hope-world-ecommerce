@@ -46,18 +46,26 @@ interface IReviewFilterVariables {
 }
 
 export default function ReviewsList() {
-  const { tableProps, searchFormProps, setFilters } = useTable<
+  const { tableProps, searchFormProps, setFilters, filters } = useTable<
     IReview,
     HttpError,
     IReviewFilterVariables
   >({
     syncWithLocation: true,
-    meta: {
-      select: "*, product:product_id(*), order:order_id(*)",
-    },
     filters: {
       defaultBehavior: "replace",
       initial: [],
+    },
+    meta: {
+      select: "*, product:product_id(*), order:order_id(*)",
+    },
+    sorters: {
+      initial: [
+        {
+          field: "created_at",
+          order: "desc",
+        },
+      ],
     },
     onSearch: (params) => {
       const filters: CrudFilters = [];
@@ -85,6 +93,8 @@ export default function ReviewsList() {
           value: createdAt ? createdAt[1].toISOString() : undefined,
         }
       );
+
+      console.log("Filters applied:", filters);
 
       return filters;
     },
