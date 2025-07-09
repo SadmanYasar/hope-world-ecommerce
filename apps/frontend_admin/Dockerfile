@@ -19,7 +19,7 @@ COPY --from=deps /app/refine/node_modules ./node_modules
 
 COPY . .
 
-RUN npm run build
+RUN yarn run build
 
 FROM base AS runner
 
