@@ -1,11 +1,12 @@
 "use client";
 
-import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input, InputNumber, Button, DatePicker, Select, Card, Row, Col } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { Edit, useForm } from "@refinedev/antd";
+import { BaseRecord } from "@refinedev/core";
+import { Button, DatePicker, Form, Input, InputNumber, Select } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { BaseRecord } from "@refinedev/core";
+import AddressFields from "./addressFields";
 
 // Enable custom parse format for dayjs
 dayjs.extend(customParseFormat);
@@ -77,78 +78,7 @@ export default function OrderEdit() {
     });
   }
 
-  // Format the address fields for display
-  const renderAddressFields = (prefix: string, label: string) => (
-    <Card title={label} size="small" style={{ marginBottom: "1rem" }}>
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item
-            name={[prefix, "name"]}
-            label="Name"
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item
-            name={[prefix, "line1"]}
-            label="Address Line 1"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item
-            name={[prefix, "line2"]}
-            label="Address Line 2"
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item
-            name={[prefix, "city"]}
-            label="City"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={8}>
-          <Form.Item
-            name={[prefix, "state"]}
-            label="State"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item
-            name={[prefix, "postal_code"]}
-            label="Postal Code"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col span={8}>
-          <Form.Item
-            name={[prefix, "country"]}
-            label="Country"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-      </Row>
-    </Card>
-  );
+
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
@@ -178,8 +108,8 @@ export default function OrderEdit() {
           <Input />
         </Form.Item>
 
-        {renderAddressFields("billing_address", "Billing Address")}
-        {renderAddressFields("shipping_address", "Shipping Address")}
+        <AddressFields prefix="billing_address" label="Billing Address" />
+        <AddressFields prefix="shipping_address" label="Shipping Address" />
 
         <Form.Item label={"Tracking ID"} name={["tracking_id"]}>
           <Input />
