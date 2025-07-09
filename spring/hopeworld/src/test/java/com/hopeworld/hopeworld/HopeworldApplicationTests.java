@@ -10,4 +10,9 @@ class HopeworldApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void thisTestWillAlwaysFail() {
+		org.junit.jupiter.api.Assertions.fail("This test is designed to fail");
+	}
+
 }
