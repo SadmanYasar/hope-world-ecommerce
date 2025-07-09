@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-hopeworld-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-boot-hopeworld
+  template:
+    metadata:
+      labels:
+        app: spring-boot-hopeworld
+    spec:
+      containers:
+      - name: spring-boot-hopeworld
+        image: ghcr.io/hopeworld/spring-boot-hopeworld:latest # need to be updated with docker image
+        ports:
+        - containerPort: 8080
