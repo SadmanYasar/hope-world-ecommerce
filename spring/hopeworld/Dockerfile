@@ -2,6 +2,9 @@
 FROM maven:3.8.3-openjdk-17 AS build
 COPY src /home/app/src
 COPY pom.xml /home/app
+
+# Set memory limits for the Maven build process
+ENV MAVEN_OPTS="-Xmx4g"
 RUN mvn -f /home/app/pom.xml clean package
 
 # Package stage
