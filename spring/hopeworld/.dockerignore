@@ -1,0 +1,10 @@
+# Ignore the Maven build output directory. This is the most important one.
+target/
+
+# Ignore the Git repository history
+.git
+.gitignore
+
+# Ignore IDE-specific files
+.idea/
+*.iml
