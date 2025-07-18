@@ -1,7 +1,7 @@
 "use client";
 
 import { useList } from "@refinedev/core";
-import { Col, Row, Spin, Divider, Typography, Button } from "antd";
+import { Col, Row, Spin, Divider, Typography, Button, Space } from "antd";
 import {
   ShoppingOutlined,
   UserOutlined,
@@ -12,6 +12,7 @@ import {
   BookOutlined,
   InboxOutlined,
   FilePdfOutlined,
+  FileExcelOutlined, // Import new icon
 } from "@ant-design/icons";
 import { useState, useEffect, useRef } from "react";
 
@@ -33,6 +34,7 @@ export default function DashboardPage() {
   const [roleDistribution, setRoleDistribution] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [exportLoading, setExportLoading] = useState(false);
+  const [reportLoading, setReportLoading] = useState(false); // State for report generation
   const dashboardRef = useRef<HTMLDivElement>(null);
 
   // Fetch summary stats with estimated counts for better performance
@@ -76,15 +78,14 @@ export default function DashboardPage() {
     },
   });
 
-  // Fetch all orders for revenue calculation
   const { data: allOrders, isLoading: allOrdersLoading } = useList({
     resource: "orders",
-    pagination: { pageSize: 100, current: 1 },
+    pagination: { pageSize: 1000, current: 1 },
     meta: {
-      select: "id, created_at, total_amount",
+      select:
+        "id, created_at, total_amount, user_id, profiles!orders_user_id_profiles_id_fkey(username, first_name, last_name, email), order_products(quantity, products(name))",
     },
   });
-
   // Fetch top-selling products with minimal data
   const { data: topProducts, isLoading: productsLoading } = useList({
     resource: "products",
@@ -113,27 +114,29 @@ export default function DashboardPage() {
   });
 
   // Fetch ALL products for category chart (not just top 5)
-  const { data: allProductsForCategories, isLoading: allProductsLoading } = useList({
-    resource: "products",
-    pagination: { pageSize: 100, current: 1 },
-    meta: {
-      select: "id, category(id,text)",
-    },
-  });
+  const { data: allProductsForCategories, isLoading: allProductsLoading } =
+    useList({
+      resource: "products",
+      pagination: { pageSize: 100, current: 1 },
+      meta: {
+        select: "id, category(id,text)",
+      },
+    });
 
   // Calculate total revenue from orders
-  const totalRevenue = allOrders?.data?.reduce(
-    (sum: number, order: any) => sum + (order.total_amount || 0),
-    0
-  ) || 0;
+  const totalRevenue =
+    allOrders?.data?.reduce(
+      (sum: number, order: any) => sum + (order.total_amount || 0),
+      0
+    ) || 0;
 
   // Process category data from products - using ALL products, not just top rated
   useEffect(() => {
     if (categories?.data && allProductsForCategories?.data) {
-      // Count products per category
-      const productCountsByCategory: Record<string, { name: string; count: number }> = {};
-
-      // Initialize with all categories
+      const productCountsByCategory: Record<
+        string,
+        { name: string; count: number }
+      > = {};
       if (Array.isArray(categories.data)) {
         categories.data.forEach((cat: any) => {
           if (cat && cat.id !== undefined && cat.text) {
@@ -144,8 +147,6 @@ export default function DashboardPage() {
           }
         });
       }
-
-      // Count products by category using ALL products data
       if (Array.isArray(allProductsForCategories.data)) {
         allProductsForCategories.data.forEach((product: any) => {
           if (product.category && product.category.id) {
@@ -153,7 +154,6 @@ export default function DashboardPage() {
             if (productCountsByCategory[catId]) {
               productCountsByCategory[catId].count += 1;
             } else {
-              // Handle case where category exists in product but not in categories list
               productCountsByCategory[catId] = {
                 name: product.category.text || `Category ${catId}`,
                 count: 1,
@@ -162,16 +162,14 @@ export default function DashboardPage() {
           }
         });
       }
-
-      // Format for chart - don't filter out categories with zero count
       const chartData = Object.values(productCountsByCategory)
-        .filter((cat) => cat.count > 0) // Only include categories with products
+        .filter((cat) => cat.count > 0)
         .map((cat) => ({
-          name: cat.name.length > 10 ? cat.name.substring(0, 10) + "..." : cat.name,
+          name:
+            cat.name.length > 10 ? cat.name.substring(0, 10) + "..." : cat.name,
           value: cat.count,
-          fullName: cat.name, // Keep full name for tooltip
+          fullName: cat.name,
         }));
-
       setCategoryData(chartData);
     }
   }, [categories, allProductsForCategories]);
@@ -184,21 +182,18 @@ export default function DashboardPage() {
         moderator: 0,
         customer: 0,
       };
-
       if (Array.isArray(profilesWithRoles.data)) {
         profilesWithRoles.data.forEach((profile: any) => {
           const role = profile.role || "customer";
           roles[role] = (roles[role] || 0) + 1;
         });
       }
-
       const roleData = Object.entries(roles)
-        .filter(([_, count]) => count > 0) // Only include roles with users
+        .filter(([_, count]) => count > 0)
         .map(([name, value]) => ({
           name: name.charAt(0).toUpperCase() + name.slice(1),
           value,
         }));
-
       setRoleDistribution(roleData);
     }
   }, [profilesWithRoles]);
@@ -213,7 +208,79 @@ export default function DashboardPage() {
     }
   };
 
-  // Check if anything is still loading
+  // Handle Sales Report Generation
+  const handleGenerateSalesReport = () => {
+    setReportLoading(true);
+    try {
+      const orders = allOrders?.data || [];
+      if (orders.length === 0) {
+        // You could add a user notification here (e.g., Ant Design's message.warning)
+        console.warn("No order data available to generate a report.");
+        return;
+      }
+
+      // Define CSV headers
+      const headers = [
+        "Order ID",
+        "Order Date",
+        "Customer Name",
+        "Total Amount",
+        "Items",
+      ];
+
+      // Map order data to CSV rows
+      const rows = orders.map((order: any) => {
+        // UPDATED: Access 'order_products' instead of 'order_items'
+        const items = (order.order_products || [])
+          .map(
+            (item: any) =>
+              `${item.products?.name || "Unknown Product"} (x${
+                item.quantity || 0
+              })`
+          )
+          .join("; "); // Use semicolon to avoid conflict with CSV comma
+
+        // UPDATED: Construct full name from first_name and last_name
+        const fullName = `${order.profiles?.first_name || ""} ${
+          order.profiles?.last_name || ""
+        }`.trim();
+        const customerName = `"${fullName || "N/A"}"`;
+
+        const itemList = `"${items}"`;
+
+        return [
+          order.id,
+          new Date(order.created_at).toLocaleDateString(),
+          customerName,
+          order.total_amount,
+          itemList,
+        ].join(",");
+      });
+
+      // Combine headers and rows into a single CSV string with a newline character
+      const csvContent = [headers.join(","), ...rows].join("\n");
+
+      // Create a Blob and trigger download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        const reportDate = new Date().toISOString().split("T")[0];
+        link.setAttribute("href", url);
+        link.setAttribute("download", `sales-report-${reportDate}.csv`);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error("Failed to generate sales report:", error);
+      // You could add a user error notification here
+    } finally {
+      setReportLoading(false);
+    }
+  };
+
   const isLoading =
     productListLoading ||
     orderCountLoading ||
@@ -241,7 +308,7 @@ export default function DashboardPage() {
     );
   }
 
-  // Safety checks for the counts - use array length instead of total property
+  // Safety checks for the counts
   const productTotal = productCountData?.total || 0;
   const orderTotal = orderCountData?.total || 0;
   const userTotal = userCountData?.total || 0;
@@ -262,19 +329,28 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard" ref={dashboardRef}>
-      <Row gutter={[16, 16]}>
-        <Col span={18}>
+      <Row gutter={[16, 16]} align="middle">
+        <Col xs={24} md={12}>
           <Title level={2}>Dashboard</Title>
         </Col>
-        <Col span={6} style={{ textAlign: 'right' }}>
-          <Button 
-            type="primary" 
-            icon={<FilePdfOutlined />} 
-            onClick={handleExportToPDF}
-            loading={exportLoading}
-          >
-            Export to PDF
-          </Button>
+        <Col xs={24} md={12} style={{ textAlign: "right" }}>
+          <Space wrap>
+            <Button
+              icon={<FileExcelOutlined />}
+              onClick={handleGenerateSalesReport}
+              loading={reportLoading}
+            >
+              Generate Sales Report
+            </Button>
+            <Button
+              type="primary"
+              icon={<FilePdfOutlined />}
+              onClick={handleExportToPDF}
+              loading={exportLoading}
+            >
+              Export to PDF
+            </Button>
+          </Space>
         </Col>
         <Col span={24}>
           <Divider />
@@ -361,19 +437,16 @@ export default function DashboardPage() {
 
         {/* User Roles Distribution */}
         <Col xs={24} md={12} lg={6}>
-          <DistributionChart 
-            title="User Roles Distribution" 
-            data={roleDistribution} 
-            showTags={true} 
+          <DistributionChart
+            title="User Roles Distribution"
+            data={roleDistribution}
+            showTags={true}
           />
         </Col>
 
         {/* Products by Category */}
         <Col xs={24} md={12} lg={6}>
-          <DistributionChart 
-            title="Products by Category" 
-            data={categoryData} 
-          />
+          <DistributionChart title="Products by Category" data={categoryData} />
         </Col>
       </Row>
 
@@ -384,9 +457,9 @@ export default function DashboardPage() {
         </Col>
 
         <Col xs={24} lg={12}>
-          <TopProductsTable 
-            formatCurrencyWithK={formatCurrencyWithK} 
-            formatPrice={formatPrice} 
+          <TopProductsTable
+            formatCurrencyWithK={formatCurrencyWithK}
+            formatPrice={formatPrice}
           />
         </Col>
       </Row>
